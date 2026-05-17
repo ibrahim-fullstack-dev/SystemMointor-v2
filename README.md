@@ -110,10 +110,6 @@ Securing the telemetry data pipeline is a top priority, as the C++ Agent reads h
 
 ## 🧪 7. Testing Strategy
 
-To maintain absolute system stability, prevent regressions, and guarantee high availability before deploying to production environments, System Monitor v2 implements a multi-tiered testing framework:
-
-## 🧪 7. Testing Strategy
-
 To maintain absolute system stability, prevent regressions, and guarantee high availability before deploying to production environments, System Monitor v2 implements a multi-tiered, responsive verification framework.
 
 ### 📦 7.1 Testing Framework Architecture
