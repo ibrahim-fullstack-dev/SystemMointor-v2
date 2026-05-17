@@ -108,15 +108,38 @@ Securing the telemetry data pipeline is a top priority, as the C++ Agent reads h
 - **Role-Based Access Control (RBAC):** Users are bounded by strict roles managed via NestJS Guards (`ADMIN`, `SERVER_OWNER`, `VIEWER`).
 - **Targeted Socket Rooms:** The backend server strictly forbids public or global broadcasting of telemetry payloads. When an Agent connects, the NestJS gateway assigns that data stream to an isolated, private socket room linked exclusively to the device owner's ID. A user can only subscribe to data streams from machines they explicitly own or have been granted permission to audit.
 
-## 7. Testing Strategy
+## 🧪 7. Testing Strategy
 
-- To maintain system stability before deployment to production environments:
+To maintain absolute system stability, prevent regressions, and guarantee high availability before deploying to production environments, System Monitor v2 implements a multi-tiered testing framework:
 
-1. Unit & Integration Testing (Backend): Powered by Jest to independently test data transformation pipes, guards, and access-control middleware.
+## 🧪 7. Testing Strategy
 
-2. Performance/Load Testing: Executed via k6 or Artillery to simulate 1,000 active agents concurrently streaming data, ensuring the backend gateway holds under high stress.
+To maintain absolute system stability, prevent regressions, and guarantee high availability before deploying to production environments, System Monitor v2 implements a multi-tiered, responsive verification framework.
 
-3. Memory Leak Detection (C++ Agent): Profiled using Valgrind to guarantee that the C++ daemon can run continuously for months without bleeding system memory.
+### 📦 7.1 Testing Framework Architecture
+
+- **🧩 Tier 1: Unit & Integration Testing**
+  - **Target Subsystem:** Backend Gateway (`NestJS`)
+  - **Tools Employed:** `Jest` / `Supertest`
+  - **Core Objective:** Verify data transformation pipes, custom validation guards, and RBAC middleware isolation logic under isolated environments.
+
+- **🏋️ Tier 2: Performance & Load Testing**
+  - **Target Subsystem:** Infrastructure Gateway Cluster
+  - **Tools Employed:** `k6` / `Artillery`
+  - **Core Objective:** Simulate 1,000+ concurrent live C++ agents streaming high-frequency payloads to stress-test memory limits and connection thresholds.
+
+- **🔍 Tier 3: Low-Level Memory Profiling**
+  - **Target Subsystem:** Telemetry Agent (`C++`)
+  - **Tools Employed:** `Valgrind` / `Dr. Memory`
+  - **Core Objective:** Intercept runtime pointer assignments to detect dynamic memory leaks ($0\text{ B}$ target leak rate) during long-term daemon execution cycles.
+
+---
+
+### ⚙️ 7.2 Testing Implementations
+
+- **🧩 Backend Integrity (Jest):** Automated tests isolate the NestJS controllers and WebSocket gateways. We mock the database connection to test how the server reacts to invalid tokens, expired sessions, and malformed JSON payloads from the network.
+- **🏋️ Stress and Concurrency (k6):** We execute virtual user scripts that mimic thousands of active machines spinning up and opening WebSocket pipelines simultaneously. The goal is to measure server CPU/RAM exhaustion spikes and fine-tune socket room allocation thresholds.
+- **🔍 Low-Level Safety (Valgrind):** Since C++ lacks automatic garbage collection, dynamic memory allocated on the heap (via `new` or raw pointers) must be explicitly freed. The C++ Agent is run through Valgrind memory checkers for hours under simulated load to guarantee zero memory leaks ($0\text{ B}$ leak rate), ensuring it can run continuously for months on client servers.
 
 ## 8. Performance Optimization
 
