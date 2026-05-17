@@ -6,7 +6,7 @@
 
 **System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely from anywhere in the world.
 
-- The system captures, processes, and visualizes the following critical telemetry metrics::
+- The system captures, processes, and visualizes the following critical telemetry metrics:
 
 **⚡ CPU:** Per-core utilization, clock speed, and core temperatures.
 
@@ -22,11 +22,9 @@
 
 ### (The Why)
 
-- In modern enterprise environments, companies manage hundreds of headless cloud servers. Manually inspecting these machines via SSH is highly inefficient.
+- **❌ The Problem:**: Existing monitoring solutions are either incredibly resource-heavy—consuming the very server capacity they are meant to watch—or they lack true real-time, instantaneous updates.
 
-* **❌ The Problem:**: Existing monitoring solutions are either incredibly resource-heavy—consuming the very server capacity they are meant to watch—or they lack true real-time, instantaneous updates.
-
-* **✅ The Solution:** This system solves this by deploying a lightweight background daemon (Agent) written in C++ that consumes less than 1% of system resources. It streams data over an optimized protocol (WebSockets) to a centralized, reactive web dashboard.
+- **✅ The Solution:** This system solves this by deploying a lightweight background daemon (Agent) written in C++ that consumes less than 1% of system resources. It streams data over an optimized protocol (WebSockets) to a centralized, reactive web dashboard.
 
 ## 🏗️ 2. System Design & Data Flow
 
