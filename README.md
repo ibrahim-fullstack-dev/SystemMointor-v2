@@ -28,23 +28,46 @@
 
 * **✅ The Solution:** This system solves this by deploying a lightweight background daemon (Agent) written in C++ that consumes less than 1% of system resources. It streams data over an optimized protocol (WebSockets) to a centralized, reactive web dashboard.
 
-## 3. System Design
+## 🏗️ 2. System Design & Data Flow
 
-- The project utilizes a decoupled 3-Tier Architecture to ensure strict Separation of Concerns and seamless long-term scalability:
+To ensure the system remains clean, untangled, and modular (unlike monolithic v1 implementations), System Monitor v2 adopts an asymmetrical, event-driven architecture decoupled into three standalone subsystems.
 
-1. The Agent Layer (C++): A lightweight background service (Daemon) running natively on the host machine (Linux/Windows). It interfaces directly with the kernel (e.g., reading the /proc filesystem on Linux) to fetch hardware metrics safely and efficiently.
+### 🔄 End-to-End Data Pipeline
 
-2. The Gateway/Backend Layer (NestJS & TypeScript): A centralized data broker that orchestrates incoming socket connections from hundreds of agents, sanitizes the payloads, and broadcasts them to authorized clients.
+The live hardware telemetry flows through three distinct stages:
 
-3. The Presentation Layer (Next.js & Tailwind CSS): A responsive, dashboard frontend that receives live data pipelines and maps them onto fluid, reactive time-series charts.
+```text
+[ Linux/windows Kernel /proc ]
+       │
+       ▼ (Direct File I/O - Native C++)
+[ 1. System Monitor Agent ]
+       │
+       ▼ (Upstream Stream via Secure WebSockets - JSON Payload)
+[ 2. NestJS Gateway Server ]
+       │
+       ▼ (Downstream Broadcast via WebSockets)
+[ 3. Next.js Web Dashboard ]
+```
 
-## 4. Architure Decision
+## ⚖️ 3. Architecture Decisions (ADRs)
 
-- Why C++ for the Agent? To achieve maximum execution performance and near-zero memory footprint. C++ allows direct, low-level OS API calls and system file reads without the heavy overhead of runtime environments like Node.js or Python.
+### 🧩 Decision 1: Utilizing C++ for the Host Agent
 
-- Why WebSockets over HTTP REST? Monitoring requires frequent updates (intervals $\le 1$ second). Continuous HTTP polling creates a massive network overhead due to constant TCP handshake cycles. WebSockets establish a single, persistent, bi-directional pipe with near-zero latency overhead.
+- **Context:** The agent must sample core hardware subsystems continuously (intervals ≤ 1s) without degrading the host's primary workload performance.
+- **Informed Choice:** Native **C++17** was chosen over managed runtimes (Node.js/Python).
+- **Impact:** Zero garbage collection (GC) pauses, deterministic memory footprint (under 15MB RAM allocation), and direct compiled execution of OS kernel APIs.
 
-- Why NestJS for the Backend? It provides a highly structured, scalable architecture that natively enforces OOP principles and SOLID design, offering robust, built-in WebSocket gateway modules
+### 🔌 Decision 2: WebSockets (WSS) vs. HTTP REST for Telemetry Streaming
+
+- **Context:** Transporting high-frequency time-series system states to the front-end dashboard.
+- **Informed Choice:** **Persistent WebSockets (Bi-directional TCP)** instead of standard HTTP Pull/Polling.
+- **Impact:** Eliminates the HTTP header overhead (saving megabytes of bandwidth over time) and achieves sub-second, live data updates in the browser UI.
+
+### 🏗️ Decision 3: NestJS for the Backend Gateway
+
+- **Context:** We need a robust server that handles hundreds of concurrent connections and scales smoothly.
+- **Informed Choice:** **NestJS Framework (TypeScript)**.
+- **Impact:** Enforces strict modular architecture, out-of-the-box WebSocket gateway architecture, and shares a highly intuitive learning curve with enterprise tools like ASP.NET.
 
 ## 5. Database Design
 
