@@ -1,30 +1,32 @@
-# System Mointor v2
+# 🖥️ System Monitor v2
 
-## 1. (The What)
+## 📋 1. Requirements Analysis
 
-- System Monitor v2 is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals from anywhere in the world.
+### 🎯 (The What)
 
-- The system tracks and visualizes the following metrics:
+**System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely from anywhere in the world.
 
-CPU: Per-core utilization, clock speed, and core temperatures.
+- The system captures, processes, and visualizes the following critical telemetry metrics::
 
-RAM: Live memory allocation, swap space, and cache usage.
+**⚡ CPU:** Per-core utilization, clock speed, and core temperatures.
 
-GPU: Graphics processor utilization and video memory (VRAM) consumption.
+**🧠 RAM:** Live memory allocation, swap space, and cache usage.
 
-Network: Real-time upload/download bandwidth, network latency, and interface status.
+**🎮 GPU:** Graphics processor utilization and video memory (VRAM) consumption.
 
-Battery: Charge capacity, degradation/health status, and power consumption rates.
+**🌐 Network:** Real-time upload/download bandwidth, network latency, and interface status.
 
-Processes (All Apps): A full inventory of active background processes with sorting options based on resource consumption.
+**🔋 Battery:** Charge capacity, degradation/health status, and power consumption rates.
 
-## 2. (The Why)
+**⚙️ Processes:** A full inventory of active background processes with sorting options based on resource consumption.
+
+### (The Why)
 
 - In modern enterprise environments, companies manage hundreds of headless cloud servers. Manually inspecting these machines via SSH is highly inefficient.
 
-The Problem: Existing monitoring solutions are either incredibly resource-heavy—consuming the very server capacity they are meant to watch—or they lack true real-time, instantaneous updates.
+* **❌ The Problem:**: Existing monitoring solutions are either incredibly resource-heavy—consuming the very server capacity they are meant to watch—or they lack true real-time, instantaneous updates.
 
-The Solution: This system solves this by deploying a lightweight background daemon (Agent) written in C++ that consumes less than 1% of system resources. It streams data over an optimized protocol (WebSockets) to a centralized, reactive web dashboard.
+* **✅ The Solution:** This system solves this by deploying a lightweight background daemon (Agent) written in C++ that consumes less than 1% of system resources. It streams data over an optimized protocol (WebSockets) to a centralized, reactive web dashboard.
 
 ## 3. System Design
 
