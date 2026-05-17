@@ -4,9 +4,17 @@
 
 ### 🎯 (The What)
 
-**System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely from anywhere in the world.
+**System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely, alongside remote reverse control from anywhere in the world.
 
-- The system captures, processes, and visualizes the following critical telemetry metrics:
+#### It is a production line consisting of three main parts:
+
+1. **Agent (written in C++):** A lightweight background daemon running on the host machine or server. Its sole function is to directly interact with the OS kernel to fetch data from hardware components.
+
+2. **Backend (written NestJS):** A centralized intermediary server. It receives the live telemetry data from the C++ Agent and broadcasts it to the internet immediately. It also receives remote commands from the dashboard and securely routes them back to the target device.
+
+3. **Frontend (written in React):** A responsive web application accessible from any device globally (computer or phone). It visualizes hardware info on live charts and provides a secure command interface containing control buttons (e.g., an emergency shut down button).
+
+#### The system captures, processes, and visualizes the following critical telemetry metrics:
 
 **⚡ CPU:** Per-core utilization, clock speed, and core temperatures.
 
