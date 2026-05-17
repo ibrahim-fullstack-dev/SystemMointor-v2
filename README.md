@@ -89,15 +89,24 @@ To handle continuous telemetry streams without causing disk I/O bottlenecks, Sys
 
 ```
 
-## 6. Securtiy Planning
+## 🔒 6. Security Planning
 
-- Securing the telemetry stream is paramount, as the Agent reads highly sensitive host environment information:
+Securing the telemetry data pipeline is a top priority, as the C++ Agent reads highly sensitive host environment metrics. The security architecture is designed to balance robust protection with zero infrastructure cost, utilizing free open-source tools.
 
-1. ncryption: All data in transit between the Agent, Backend, and Browser is forced over encrypted protocols: WSS (Secure WebSockets) and HTTPS.
+### 🌐 6.1 Data Transit & Environment Adaptation (Encryption)
 
-2. Authentication: Upon initialization, each Agent is issued a unique cryptographic API Token. The backend rejects any data packet that does not provide a valid token in the connection handshake.
+- **Development Environment (Cost-Free Localhost):** During development and local testing, the system operates securely over standard `http://localhost` and `ws://localhost`. Modern web browsers natively treat localhost as a secure context, allowing full feature development without purchasing SSL certificates.
+- **Production Environment (Automated Free Encryption):** When deployed to the cloud, the data stream is automatically upgraded to **HTTPS** and **WSS (Secure WebSockets)**. This is achieved at zero cost by utilizing **Let's Encrypt** (automated, free SSL/TLS certificates) or **Cloudflare's Free Tier** proxy, ensuring all high-frequency hardware metrics are fully encrypted in transit against man-in-the-middle (MITM) attacks.
 
-3. Authorization (RBAC): Strict Role-Based Access Control isolates server views; users can only stream data from machines they explicitly own or have been granted access to.
+### 🔑 6.2 Telemetry Ingress Validation (Authentication)
+
+- **Cryptographic API Tokens:** Upon initial setup, each registered target machine is issued a unique, long-lived API Token.
+- **Secure Connection Handshake:** When the C++ Agent initiates a dynamic WebSocket connection to the NestJS gateway, it must pass this token within the connection headers. The backend instantly validates the token against a hashed record in the PostgreSQL database. If the token is missing or invalid, the backend terminates the socket connection within 3 seconds to prevent unauthorized resource consumption.
+
+### 🛡️ 6.3 Multitenancy & Data Isolation (Authorization)
+
+- **Role-Based Access Control (RBAC):** Users are bounded by strict roles managed via NestJS Guards (`ADMIN`, `SERVER_OWNER`, `VIEWER`).
+- **Targeted Socket Rooms:** The backend server strictly forbids public or global broadcasting of telemetry payloads. When an Agent connects, the NestJS gateway assigns that data stream to an isolated, private socket room linked exclusively to the device owner's ID. A user can only subscribe to data streams from machines they explicitly own or have been granted permission to audit.
 
 ## 7. Testing Strategy
 
