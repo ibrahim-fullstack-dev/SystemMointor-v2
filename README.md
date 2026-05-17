@@ -151,11 +151,22 @@ To ensure the telemetry platform can scale to accommodate thousands of concurren
 - **The Paradigm Shift:** Implementing a reactive feedback loop between the NestJS gateway and the remote C++ Agents using an active client detection algorithm.
 - **The Impact:** If the NestJS server detects that no authorized administrator is currently viewing a specific machine's web dashboard, it emits a background signaling event back to that machine's respective C++ Agent. Upon reception, the Agent dynamically toggles its internal loop hardware sampling rate from high-frequency mode (**1 second**) to economy sleep mode (**60 seconds**). This preserves host CPU idle cycles, saves client server battery/energy, and avoids flooding the central gateway with unread telemetry logs.
 
-## 9. Long-Term Maintenance
+## 📦 9. Long-Term Maintenance & DevOps Pipeline
 
-- Containerization: The entire architecture is configured to deploy via Docker. Docker Compose manages the backend, database, and caching layers identically across local environments and cloud providers (AWS, DigitalOcean).
+To guarantee that System Monitor v2 can be consistently deployed, scaled, and maintained across disparate environments without configuration drift or human error, the codebase incorporates production-ready DevOps automation.
 
-- CI/CD Pipelines: Automated workflows configured with GitHub Actions to lint, test, and compile the frontend/backend applications and verify the C++ build script on every commit.
+### 🐳 9.1 Multi-Container Orchestration (Containerization)
+
+- **The Architecture:** The platform is decoupled and containerized utilizing **Docker** and orchestrated via **Docker Compose**.
+- **The Impact:** It packages the NestJS server, PostgreSQL engine, and Redis caching layer into isolated, identical runtime environments (Containers). This completely eliminates the infamous _"it works on my machine"_ bug. Whether you boot the platform on a local computer or deploy it to cloud infrastructures like **AWS EC2** or **DigitalOcean Droplets**, the system runs identically, reducing infrastructure configuration overhead to a single command: `docker-compose up -d`.
+
+### 🚀 9.2 Automated Workflows (CI/CD Pipelines)
+
+- **The Architecture:** Continuous Integration and Continuous Deployment (CI/CD) pipelines managed dynamically via **GitHub Actions**.
+- **The Impact:** Every time you push code or open a Pull Request, automated cloud runners wake up to audit your repository:
+  1.  **Linting & Styling:** Enforces code cleanliness standards on the NestJS and Next.js applications.
+  2.  **Automated Testing:** Executes the entire `Jest` test suite to catch regressions before they hit production.
+  3.  **Cross-Platform Compilation:** Automatically runs the C++ compiler toolchain (`g++` / `clang`) on clean Linux environments to verify that the core System Agent compiles flawlessly without syntax or pointer initialization bugs.
 
 ## 10. Building & Installing
 
