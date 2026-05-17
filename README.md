@@ -69,13 +69,25 @@ The live hardware telemetry flows through three distinct stages:
 - **Informed Choice:** **NestJS Framework (TypeScript)**.
 - **Impact:** Enforces strict modular architecture, out-of-the-box WebSocket gateway architecture, and shares a highly intuitive learning curve with enterprise tools like ASP.NET.
 
-## 5. Database Design
+## 🗄️ 4. Database Design (Polyglot Persistence)
 
-- To handle a continuous flow of data changing every second without degrading system performance, a Polyglot Persistence model is implemented:
+To handle continuous telemetry streams without causing disk I/O bottlenecks, System Monitor v2 splits its data layer into two distinct storage paradigms:
 
-1. Relational Data (PostgreSQL): Handles user accounts, subscription metrics, registered agents, access control tokens, and custom threshold configurations.
+```text
+                           ┌───────────────────────────┐
+                           │   NestJS Backend Server   │
+                           └─────────────┬─────────────┘
+                                         │
+                 ┌───────────────────────┴───────────────────────┐
+                 ▼ (Relational / ACID)                           ▼ (Time-Series / High Ingestion)
+     ┌───────────────────────┐                       ┌───────────────────────┐
+     │   PostgreSQL Engine   │                       │   TimescaleDB/Redis   │
+     └───────────────────────┘                       └───────────────────────┘
+     - User Profiles                                 - CPU/RAM Metrics Log
+     - Device Registration                           - Historical Analytics
+     - API Tokens & RBAC                             - Alert Threshold Logs
 
-2. Time-Series Data (TimescaleDB / Redis Caching): Historical metrics (used to generate weekly/monthly diagnostic reports) are fed into TimescaleDB, while live telemetry uses Redis caching to prevent disk write bottlenecks.
+```
 
 ## 6. Securtiy Planning
 
@@ -111,3 +123,7 @@ The live hardware telemetry flows through three distinct stages:
 - CI/CD Pipelines: Automated workflows configured with GitHub Actions to lint, test, and compile the frontend/backend applications and verify the C++ build script on every commit.
 
 ## 10. Building & Installing
+
+```
+
+```
