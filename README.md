@@ -28,23 +28,19 @@
 
 **⚙️ Processes:** A full inventory of active background processes with sorting options based on resource consumption.
 
-### (The Why)
+### 💡 (The Why)
 
-- **❌Problems:**
+- **❌ The Problem:**
 
-1. **High Resource Consumption by Monitoring Tools:** Many corporate monitoring tools are written using heavy web technologies or managed runtimes (like Java or Node.js) directly on the host machine. This creates a paradox: the monitoring software itself consumes a significant percentage of the server's CPU and RAM, leaving fewer resources for the actual business applications.
-
-2. **Passive Monitoring vs. Lack of Remote Control:** Most monitoring platforms are "passive"—they only show charts and send alert emails when a server is in danger (e.g., overheating). The administrator then has to manually open a terminal, connect via a VPN, and execute commands to save the server, wasting precious time during an infrastructure emergency.
-
-3. **High Latency and Delayed Alerts (The Polling Problem):** Traditional monitoring setups rely on "HTTP Polling"—meaning the server asks the host for its status every 1 or 5 minutes. If a server's CPU spikes to 100% or a critical service crashes right after a check, the IT team will not know about it until the next minute loop, which can cause massive service downtime.
+- While many monitoring tools exist, they often suffer from poor user experience, delayed alerts, and an inability to take action. System Monitor v2 was built to solve these exact user frustrations by focusing on three core motivations:
 
 - **✅ The Solution:**
 
-1. **Ultra-Lightweight Resource Management:** By building the monitoring Agent in native C++, the system bypasses heavy runtimes and interacts directly with the Operating System kernel. This ensures an ultra-lightweight background daemon that operates at peak performance, consuming less than 1% of system resources, keeping the server's power dedicated entirely to its actual job.
+1. **1. Universal Accessibility & Ease of Use:** System administrators shouldn't be tethered to complex VPN setups, local networks, or intimidating terminal screens just to check their hardware. This project democratizes server management by providing a sleek, responsive web dashboard. A user can securely monitor their entire infrastructure from a laptop, tablet, or smartphone anywhere in the world with zero friction.
 
-2. **Two-Way Reactive Control & Easy Accessibility:** This project builds a secure, web-accessible, two-way reactive control center. Because a persistent connection is already live between the machine and the NestJS server, the React dashboard acts as an instantaneous remote command unit. An admin can securely click a button on the website from anywhere, and the server pushes a reverse command (like SHUTDOWN or RESTART) down to the host machine to protect hardware before damage occurs.
+2. **Active Device Protection (From Passive to Reactive):** Most monitoring platforms are strictly "passive"—they only send an email alert when a server is already overheating or crashing. This system transitions to "active" protection by acting as a two-way control center. If an administrator spots a critical spike on the dashboard, they don't need to waste time logging into the server manually; they can instantly push a reverse command (like an emergency SHUTDOWN) directly from the browser to save the hardware before catastrophic damage occurs.
 
-3. **Real-Time Device Protection via WebSockets:** The system completely replaces outdated HTTP polling with an optimized, persistent WebSocket pipeline. The exact moment a hardware metric changes, the C++ Agent streams the update to the NestJS backend instantly. This enables a true real-time, sub-second live dashboard in React, allowing administrators to catch and mitigate critical spikes the exact second they happen.
+3. **Peace of Mind Through Instant Visibility:** TTraditional monitoring setups rely on delayed polling (e.g., refreshing data every 1 to 5 minutes), leaving IT teams blind to sudden traffic spikes or memory leaks between those intervals. By streaming true, sub-second live telemetry, this project gives engineers absolute peace of mind. They can trust that they are seeing the exact, live pulse of their machines the very millisecond a change happens.
 
 ## 🏗️ 2. System Design & Data Flow
 
