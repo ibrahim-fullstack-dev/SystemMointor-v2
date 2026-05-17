@@ -137,12 +137,19 @@ To maintain absolute system stability, prevent regressions, and guarantee high a
 - **🏋️ Stress and Concurrency (k6):** We execute virtual user scripts that mimic thousands of active machines spinning up and opening WebSocket pipelines simultaneously. The goal is to measure server CPU/RAM exhaustion spikes and fine-tune socket room allocation thresholds.
 - **🔍 Low-Level Safety (Valgrind):** Since C++ lacks automatic garbage collection, dynamic memory allocated on the heap (via `new` or raw pointers) must be explicitly freed. The C++ Agent is run through Valgrind memory checkers for hours under simulated load to guarantee zero memory leaks ($0\text{ B}$ leak rate), ensuring it can run continuously for months on client servers.
 
-## 8. Performance Optimization
+## ⚡ 8. Performance Optimization
 
-- Performance Optimization
-  Binary Payloads (Future Implementation): Migrating from string-based JSON to gRPC / Protocol Buffers. This will compress the network payload into a highly optimized binary format, reducing data transmission over the network by up to 70%.
+To ensure the telemetry platform can scale to accommodate thousands of concurrent infrastructure nodes without experiencing hardware degradation or excessive network congestion, System Monitor v2 integrates advanced optimization architectures.
 
-- Dynamic Throttling: If no user is actively viewing a specific machine's dashboard, the backend signals the respective Agent to reduce its sampling rate from (1 second) to (60 seconds), saving server energy and network bandwidth.
+### 🌐 8.1 Data Serialization Migration (Future Implementation)
+
+- **The Paradigm Shift:** Migrating upstream and downstream telemetry payloads from verbose, string-based **JSON** formats to strongly-typed **gRPC / Protocol Buffers (Protobuf)**.
+- **The Impact:** JSON sends raw text keys (like `"cpu_utilization": 45`) repeatedly every second, which wastes network packets. Protocol Buffers serialize this data into an immutable, highly compressed binary format. This transition reduces network serialization payload overhead by **up to 70%**, minimizing packet fragmentation and significantly lowering network bandwidth costs.
+
+### ⏱️ 8.2 Event-Driven Dynamic Throttling (Resource Conservation)
+
+- **The Paradigm Shift:** Implementing a reactive feedback loop between the NestJS gateway and the remote C++ Agents using an active client detection algorithm.
+- **The Impact:** If the NestJS server detects that no authorized administrator is currently viewing a specific machine's web dashboard, it emits a background signaling event back to that machine's respective C++ Agent. Upon reception, the Agent dynamically toggles its internal loop hardware sampling rate from high-frequency mode (**1 second**) to economy sleep mode (**60 seconds**). This preserves host CPU idle cycles, saves client server battery/energy, and avoids flooding the central gateway with unread telemetry logs.
 
 ## 9. Long-Term Maintenance
 
