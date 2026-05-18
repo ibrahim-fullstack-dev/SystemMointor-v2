@@ -51,50 +51,60 @@ To ensure the system remains clean, untangled, and modular (unlike monolithic v1
 The live hardware telemetry flows through three distinct stages:
 
 ```text
-[ Hardware / Operating System Kernel ] (Windows API / Linux /proc)
-                 │
-                 ▼ (Direct File I/O / OS Calls)
-┌────────────────────────────────────────────────────────┐
-│               1. C++ SYSTEM MONITOR AGENT              │
-│                                                        │
-│   ┌────────────────────────────────────────────────┐   │
-│   │   Data Access Layer (DAL)                      │   │
-│   │   [WindowsMetricsReader / LinuxMetricsReader]  │   │
-│   └───────────────────────┬────────────────────────┘   │
-│                           │                            |
-│                           ▼                            │
-│   ┌────────────────────────────────────────────────┐   │
-│   │   Business Logic Layer (BLL)                   │   │
-│   │   [MonitoringLogic]                            │   │
-│   │    Runs inside a Dedicated Background Thread   │   │
-│   │    Execution Loop with a 3-Second Sleep Timer  │   │
-│   └───────────────────────┬────────────────────────┘   │
-│                           │                            │
-│                           ▼                            │
-│   ┌────────────────────────────────────────────────┐   │
-│   │   Network / Gateway Layer                      │   │
-│   │   [WebSocketClient]                            │   │
-│   └────────────────────────────────────────────────┘   │
-└────────────────────────┬───────────────────────────────┘
-                         │
-                         ▼ (Upstream: Continuous JSON Payload via WebSockets)
-┌────────────────────────────────────────────────────────┐
-│               2. NestJS GATEWAY SERVER                 │
-│                                                        │
-│   • Manages active device connections & Socket IDs.    │
-│   • Receives real-time telemetry from C++ Agent.       │
-│   • Listens for reverse remote control commands.       │
-└────────────────────────┬───────────────────────────────┘
-                         │
-                         ▼ (Downstream: Live Broadcast via WebSockets)
-┌────────────────────────────────────────────────────────┐
-│               3. REACT WEB DASHBOARD                   │
-│                                                        │
-│   • Displays live hardware metrics on dynamic charts.  │
-│   • Renders UI within a fixed-size buffer smoothly.    │
-│   • Features interactive buttons for remote control    │
-│     (e.g., Emergency Shutdown / Restart).              │
-└────────────────────────────────────────────────────────┘
+       ┌─────────────────────────────────────────────────────────┐
+       │ Operating System Service Manager (Windows SCM / systemd)│
+       └───────────────────────────┬─────────────────────────────┘
+                                   │ (Spawns, Monitors & Controls Lifecycle)
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                      1. C++ SYSTEM MONITOR AGENT                       │
+│                                                                        │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │                    Data Access Layer (DAL)                     │   │
+│   │          [WindowsMetricsReader / LinuxMetricsReader]           │   │
+│   └──────────────────────────────▲─────────────────────────────────┘   │
+│                                  │ (Reads System Vitals)               │
+│                                  ▼                                     │
+│                 [ Hardware / OS Kernel /proc ]                         │
+│                                  ▲                                     │
+│                                  │ (Executes Remote Commands)          │
+│   ┌──────────────────────────────▼─────────────────────────────────┐   │
+│   │                  Business Logic Layer (BLL)                    │   │
+│   │                       [MonitoringLogic]                        │   │
+│   │    ⚙️ Runs inside an interruptible Background Thread           |   |
+│   │    ⚙️ Condition Variable Loop (3-Second Smart Wakeup Timer)    |   |
+│   └──────────────────────────────▲─────────────────────────────────┘   │
+│                                  │ (Encapsulates Data / Decodes Commands)
+│                                  ▼                                     │
+│   ┌────────────────────────────────────────────────────────────────┐   │
+│   │                    Network / Gateway Layer                     │   │
+│   │                       [WebSocketClient]                        │   │
+│   └──────────────────────────────▲─────────────────────────────────┘   │
+└──────────────────────────────────┼─────────────────────────────────────┘
+                                   │
+                                   │ 🔄 Full-Duplex WebSockets Link
+                                   │    ▲ Upstream: Continuous Telemetry (JSON)
+                                   │    ▼ Downstream: Reverse Remote Commands
+                                   │
+┌──────────────────────────────────▼─────────────────────────────────────┐
+│                       2. NestJS GATEWAY SERVER                         │
+│                                                                        │
+│    • Manages active device connections & maps unique Socket IDs.       │
+│    • Ingests live streams from Agent and immediately broadcasts them.  │
+│    • Securely routes reverse control JSON frames back to the target.   │
+└──────────────────────────────────┬─────────────────────────────────────┘
+                                   │
+                                   │ 🔄 Full-Duplex WebSockets Link
+                                   │    ▲ Upstream: Live Dashboard Rendering
+                                   │    ▼ Downstream: User Control Input Action
+                                   │
+┌──────────────────────────────────▼─────────────────────────────────────┐
+│                        3. REACT WEB DASHBOARD                          │
+│                                                                        │
+│    • Renders live telemetry on responsive, low-latency charts.         │
+│    • Implements clean memory buffering to prevent browser crashes.     │
+│    • UI Command Grid: Direct action triggers (e.g., Force Shutdown).   │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## ⚖️ 3. Architecture Decisions (ADRs)
