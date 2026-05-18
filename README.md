@@ -2,7 +2,7 @@
 
 ## 📋 1. Requirements Analysis
 
-### 🎯 (The What)
+### 🎯 1.1 (The What)
 
 **System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely, alongside remote reverse control from anywhere in the world.
 
@@ -28,15 +28,15 @@
 
 **⚙️ Processes:** A full inventory of active background processes with sorting options based on resource consumption.
 
-### 💡 (The Why)
+### 💡1.2 (The Why)
 
-- **❌ The Problem:**
+**❌ The Problem:**
 
 - While many monitoring tools exist, they often suffer from poor user experience, delayed alerts, and an inability to take action. System Monitor v2 was built to solve these exact user frustrations by focusing on three core motivations:
 
-- **✅ The Solution:**
+  **✅ The Solution:**
 
-1. **1. Universal Accessibility & Ease of Use:** System administrators shouldn't be tethered to complex VPN setups, local networks, or intimidating terminal screens just to check their hardware. This project democratizes server management by providing a sleek, responsive web dashboard. A user can securely monitor their entire infrastructure from a laptop, tablet, or smartphone anywhere in the world with zero friction.
+1. **Universal Accessibility & Ease of Use:** System administrators shouldn't be tethered to complex VPN setups, local networks, or intimidating terminal screens just to check their hardware. This project democratizes server management by providing a sleek, responsive web dashboard. A user can securely monitor their entire infrastructure from a laptop, tablet, or smartphone anywhere in the world with zero friction.
 
 2. **Active Device Protection (From Passive to Reactive):** Most monitoring platforms are strictly "passive"—they only send an email alert when a server is already overheating or crashing. This system transitions to "active" protection by acting as a two-way control center. If an administrator spots a critical spike on the dashboard, they don't need to waste time logging into the server manually; they can instantly push a reverse command (like an emergency SHUTDOWN) directly from the browser to save the hardware before catastrophic damage occurs.
 
@@ -51,16 +51,50 @@ To ensure the system remains clean, untangled, and modular (unlike monolithic v1
 The live hardware telemetry flows through three distinct stages:
 
 ```text
-[ Linux/windows Kernel /proc ]
-       │
-       ▼ (Direct File I/O - Native C++)
-[ 1. System Monitor Agent ]
-       │
-       ▼ (Upstream Stream via Secure WebSockets - JSON Payload)
-[ 2. NestJS Gateway Server ]
-       │
-       ▼ (Downstream Broadcast via WebSockets)
-[ 3. Next.js Web Dashboard ]
+[ Hardware / Operating System Kernel ] (Windows API / Linux /proc)
+                 │
+                 ▼ (Direct File I/O / OS Calls)
+┌────────────────────────────────────────────────────────┐
+│               1. C++ SYSTEM MONITOR AGENT              │
+│                                                        │
+│   ┌────────────────────────────────────────────────┐   │
+│   │   Data Access Layer (DAL)                      │   │
+│   │   [WindowsMetricsReader / LinuxMetricsReader]  │   │
+│   └───────────────────────┬────────────────────────┘   │
+│                           │                            |
+│                           ▼                            │
+│   ┌────────────────────────────────────────────────┐   │
+│   │   Business Logic Layer (BLL)                   │   │
+│   │   [MonitoringLogic]                            │   │
+│   │    Runs inside a Dedicated Background Thread   │   │
+│   │    Execution Loop with a 3-Second Sleep Timer  │   │
+│   └───────────────────────┬────────────────────────┘   │
+│                           │                            │
+│                           ▼                            │
+│   ┌────────────────────────────────────────────────┐   │
+│   │   Network / Gateway Layer                      │   │
+│   │   [WebSocketClient]                            │   │
+│   └────────────────────────────────────────────────┘   │
+└────────────────────────┬───────────────────────────────┘
+                         │
+                         ▼ (Upstream: Continuous JSON Payload via WebSockets)
+┌────────────────────────────────────────────────────────┐
+│               2. NestJS GATEWAY SERVER                 │
+│                                                        │
+│   • Manages active device connections & Socket IDs.    │
+│   • Receives real-time telemetry from C++ Agent.       │
+│   • Listens for reverse remote control commands.       │
+└────────────────────────┬───────────────────────────────┘
+                         │
+                         ▼ (Downstream: Live Broadcast via WebSockets)
+┌────────────────────────────────────────────────────────┐
+│               3. REACT WEB DASHBOARD                   │
+│                                                        │
+│   • Displays live hardware metrics on dynamic charts.  │
+│   • Renders UI within a fixed-size buffer smoothly.    │
+│   • Features interactive buttons for remote control    │
+│     (e.g., Emergency Shutdown / Restart).              │
+└────────────────────────────────────────────────────────┘
 ```
 
 ## ⚖️ 3. Architecture Decisions (ADRs)
