@@ -223,7 +223,7 @@ The live hardware telemetry flows through three distinct stages:
 
 - ✅ **The Solution:** NestJS Framework (TypeScript) utilizing native Dependency Injection.
 
-- 🚀 **The Impact:** Enforces strict modular design, isolates the streaming engine (agent-gateway) from the health checks (background-tracker), and scales effortlessly.
+- 🚀 **The Impact:** It bridges the gap between high-speed asynchronous networking and strict engineering architecture, isolates the streaming engine (agent-gateway) from the health checks (background-tracker), and scales effortlessly.
 
 ### 🎨 Decision 4: React SPA (Vite) vs. Next.js Framework
 
