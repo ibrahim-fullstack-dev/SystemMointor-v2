@@ -201,23 +201,37 @@ The live hardware telemetry flows through three distinct stages:
 
 ## ⚖️ 3. Architecture Decisions (ADRs)
 
-### 🧩 Decision 1: Utilizing C++ for the Host Agent
+### 🧩 Decision 1: C++ Native Target vs. Managed Worker Templates
 
-- **Context:** The agent must sample core hardware subsystems continuously (intervals ≤ 1s) without degrading the host's primary workload performance.
-- **Informed Choice:** Native **C++17** was chosen over managed runtimes (Node.js/Python).
-- **Impact:** Zero garbage collection (GC) pauses, deterministic memory footprint (under 15MB RAM allocation), and direct compiled execution of OS kernel APIs.
+- ❌ **The Problem:** Built-in IDE templates (like C# Worker Service / other languages) require heavy runtimes, consuming 30–50 MB of RAM idle with unpredictable Garbage Collection (GC) spikes.
 
-### 🔌 Decision 2: WebSockets (WSS) vs. HTTP REST for Telemetry Streaming
+- ✅ **The Solution:** A native executable project manually configured via CMake using compiled .cpp/.hpp files.
 
-- **Context:** Transporting high-frequency time-series system states to the front-end dashboard.
-- **Informed Choice:** **Persistent WebSockets (Bi-directional TCP)** instead of standard HTTP Pull/Polling.
-- **Impact:** Eliminates the HTTP header overhead (saving megabytes of bandwidth over time) and achieves sub-second, live data updates in the browser UI.
+- 🚀 **The Impact:** Direct interaction with OS Kernel APIs (Windows API / Linux /proc), a tiny 2–5 MB RAM footprint, zero runtime dependencies, and < 1% CPU overhead.
 
-### 🏗️ Decision 3: NestJS for the Backend Gateway
+### 🔌 Decision 2: WebSockets (WSS) vs. HTTP REST Polling
 
-- **Context:** We need a robust server that handles hundreds of concurrent connections and scales smoothly.
-- **Informed Choice:** **NestJS Framework (TypeScript)**.
-- **Impact:** Enforces strict modular architecture, out-of-the-box WebSocket gateway architecture, and shares a highly intuitive learning curve with enterprise tools like ASP.NET.
+- ❌ **The Problem:** Traditional HTTP REST polling creates immense network overhead by constantly opening/closing connections and repeating bulky text headers.
+
+- ✅ **The Solution:** A single, persistent Bi-directional WebSocket (TCP) connection.
+
+- 🚀 **The Impact:** Eliminates HTTP header waste, slashes bandwidth consumption, and achieves true sub-second, full-duplex telemetry and remote control.
+
+### 🏗️ Decision 3: NestJS for the Backend Server Gateway
+
+- ❌ **The Problem:** Raw Node.js/Express servers lack structural enforcement, leading to unmaintainable code as real-time features grow.
+
+- ✅ **The Solution:** NestJS Framework (TypeScript) utilizing native Dependency Injection.
+
+- 🚀 **The Impact:** Enforces strict modular design, isolates the streaming engine (agent-gateway) from the health checks (background-tracker), and scales effortlessly.
+
+### 🎨 Decision 4: React SPA (Vite) vs. Next.js Framework
+
+- ❌ **The Problem:** Next.js introduces Server-Side Rendering (SSR) overhead, which is completely unnecessary for an internal, private real-time app with no SEO requirements.
+
+- ✅ **The Solution:** A pure client-side React Single Page Application (SPA) bundled with Vite.
+
+- 🚀 **The Impact:** Zero server-side state overhead; the browser downloads static assets once and dedicates 100% of its focus to painting live WebSocket data charts at 60 FPS.
 
 ## 🗄️ 4. Database Design (Polyglot Persistence)
 
