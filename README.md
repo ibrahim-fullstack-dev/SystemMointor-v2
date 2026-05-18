@@ -46,7 +46,7 @@
 
 To ensure the system remains clean, untangled, and modular (unlike monolithic v1 implementations), System Monitor v2 adopts an asymmetrical, event-driven architecture decoupled into three standalone subsystems.
 
-### 🔄 End-to-End Data Pipeline
+### 🔄 2.1 End-to-End Data Pipeline
 
 The live hardware telemetry flows through three distinct stages:
 
@@ -105,6 +105,98 @@ The live hardware telemetry flows through three distinct stages:
 │    • Implements clean memory buffering to prevent browser crashes.     │
 │    • UI Command Grid: Direct action triggers (e.g., Force Shutdown).   │
 └────────────────────────────────────────────────────────────────────────┘
+```
+
+### 📝 2.2 Structural Breakdown & Component Descriptions
+
+1. C++ SYSTEM MONITOR AGENT
+
+```text
+📁 SystemMonitorAgent/
+│
+├──📄 CMakeLists.txt                 # The central build configuration file (cross-platform rules)
+│
+├── 📁 include/                       # Public Headers & Interfaces (What the system can do)
+│   └── 📁 agent/
+│       ├── 📁 core/
+│       │   └── 📄 MonitoringLogic.hpp
+│       ├── 📁 data_access/
+│       │   ├── 📄 ISystemMetricsReader.hpp
+│       │   ├── 📄 WindowsMetricsReader.hpp
+│       │   └── 📄 LinuxMetricsReader.hpp
+│       └── 📁 network/
+│           ├── 📄 INetworkClient.hpp
+│           └── 📄 WebSocketClient.hpp
+│
+├── 📁 src/                           # Source Implementations (How the system does it)
+│   ├── 📁 data_access/
+│   │   ├── 📄 WindowsMetricsReader.cpp  # DAL: Windows Native API readings
+|   |   └── 📄 LinuxMetricsReader.cpp    # DAL: Linux /proc filesystem readings
+│   ├── 📁 core/
+|   |    └── 📄 MonitoringLogic.cpp      # Business Logic Layer (The loop orchestration)
+│   └── 📁 network/
+│       └── 📄 WebSocketClient.cpp    # Network Gateway: Sending payloads to NestJS
+│
+└── 📁 platforms/                     # OS Host Environments (How the system is launched)
+    ├── 📁 windows/
+    │   └── 📄 WindowsServiceMain.cpp # Entry point: Registers & runs as a Windows Service
+    └── 📁 linux/
+        └── 📄 LinuxDaemonMain.cpp    # Entry point: Forks & runs as a Linux systemd Daemon
+
+```
+
+2. NestJS GATEWAY SERVER
+
+```text
+📁 nestjs-gateway-server/
+│
+├── 📁 src/
+│   ├── 📄 app.module.ts              # Root Module: Tying all modules together
+│   ├── 📄 main.ts                    # Entry Point: Starts the NestJS HTTP/WS Server
+│   │
+│   ├── 📁 core/                      # Global common contracts and models
+│   │   └── 📁 interfaces/
+│   │       ├── 📄 device-metrics.interface.ts  # Structure of incoming JSON payload
+│   │       └── 📄 active-device.interface.ts   # Structure of an connected agent session
+│   │
+│   ├── 📁 agent-gateway/             # 🌐 The WebSocket Server Layer
+│   │   ├── 📄 agent.gateway.ts       # Handles WebSocket connections, events & streams
+│   │   ├── 📄 agent.gateway.module.ts# Encapsulates WebSocket logic
+│   │   └── 📄 agent.gateway.service.ts # Manages socket maps (Socket IDs to Device IDs)
+│   │
+│   └── 📁 background-tracker/        # ⚙️ The Server-Side Background Layer
+│       ├── 📄 tracker.module.ts      # Registers cron jobs or interval tasks
+│       └── 📄 tracker.service.ts     # Monitors timeouts (detects if an agent dies)
+```
+
+3. REACT WEB DASHBOARD
+
+```text
+📁 react-monitor-dashboard/
+│
+├── index.html                 # The single HTML page template
+├── 📁 src/
+│   ├── main.tsx               # Application entry point
+│   ├── App.tsx                # Root component (Layout wrapper)
+│   │
+│   ├── 📁 assets/                # Static assets (images, icons, global styles)
+│   │
+│   ├── 📁 core/                  # Shared data definitions and utility functions
+│   │   ├── types/
+│   │   │   └── metrics.types.ts # TypeScript interfaces mirroring NestJS/C++ models
+│   │   └── utils/
+│   │       └── formatters.ts   # Helper functions (e.g., bytes to GB, rounding % values)
+│   │
+│   ├── 📁 hooks/                 # Custom React Hooks (Crucial for state management)
+│   │   └── useAgentWebSocket.ts # Encapulates all WebSocket listening and cleanup logic
+│   │
+│   └── 📁 components/            # UI Display Blocks
+│       ├── 📁 common/
+│       │   └── Button.tsx     # Reusable UI buttons (e.g., for Remote Control triggers)
+│       └── 📁 dashboard/
+│           ├── MetricsGrid.tsx # Container grid for all dynamic metrics cards
+│           ├── MetricCard.tsx  # Individual card tracking a single metric (CPU/RAM)
+│           └── ControlPanel.tsx# Section hosting the Remote Shutdown / Restart buttons
 ```
 
 ## ⚖️ 3. Architecture Decisions (ADRs)
