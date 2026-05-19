@@ -117,17 +117,31 @@ The live hardware telemetry flows through three distinct stages:
 ├──📄 CMakeLists.txt                 # The central build configuration file (cross-platform rules)
 │
 ├── 📁 include/                       # Public Headers & Interfaces (What the system can do)
-│   └── 📁 agent/
-│       ├── 📁 core/
-│       │   └── 📄 MonitoringLogic.hpp
-│       ├── 📁 data_access/
-│       │   ├── 📄 ISystemMetricsReader.hpp
-│       │   ├── 📄 WindowsMetricsReader.hpp
-│       │   └── 📄 LinuxMetricsReader.hpp
-│       └── 📁 network/
-│           ├── 📄 INetworkClient.hpp
-│           └── 📄 WebSocketClient.hpp
-│
+│   |── 📁 interfaces/
+|   |   ├── 📄 IComponentMetadataProvider.hpp
+|   |   ├── 📄 IErrorProvider.hpp
+│   |   |── 📄 IDescriptionProvider.hpp
+│   |   ├── 📄 IBatteryProvider.hpp
+│   |   ├── 📄 ICapacityProvider.hpp
+│   |   ├── 📄 IRangeProvider.hpp
+│   |   ├── 📄 ISchedulingProvider.hpp
+|   |   ├── 📄 IThermalProvider.hpp
+|   |   ├── 📄 ITimeEstimateProvider.hpp
+|   |   ├── 📄 IUnitProvider.hpp
+|   |   ├── 📄 IStatusProvider.hpp
+│   |   └── 📄 IUsageProvider.hpp
+│   |
+|   ├── 📁 enums/                        # Shared cross-platform types
+|   |    ├── 📄 BatteryState.hpp
+|   |    ├── 📄 ThermalState.hpp
+|   |    ├── 📄 ErrorTypes.hpp
+|   |    ├── 📄 UnitTypes.hpp
+│   |    └── 📄 StatusLevel.hpp
+|   |
+|   |
+|   |
+|   └── 📁 models/
+|
 ├── 📁 src/                           # Source Implementations (How the system does it)
 │   ├── 📁 data_access/
 │   │   ├── 📄 WindowsMetricsReader.cpp  # DAL: Windows Native API readings
