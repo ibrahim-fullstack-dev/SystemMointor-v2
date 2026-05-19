@@ -118,19 +118,25 @@ The live hardware telemetry flows through three distinct stages:
 │
 ├── 📁 include/                       # Public Headers & Interfaces (What the system can do)
 │   |── 📁 interfaces/
-|   |   ├── 📄 IComponentMetadataProvider.hpp
-|   |   ├── 📄 IErrorProvider.hpp
-│   |   |── 📄 IDescriptionProvider.hpp
-│   |   ├── 📄 IBatteryProvider.hpp
-│   |   ├── 📄 ICapacityProvider.hpp
-│   |   ├── 📄 IRangeProvider.hpp
-│   |   ├── 📄 ISchedulingProvider.hpp
-|   |   ├── 📄 IThermalProvider.hpp
-|   |   ├── 📄 ITimeEstimateProvider.hpp
-|   |   ├── 📄 IUnitProvider.hpp
-|   |   ├── 📄 IStatusProvider.hpp
-│   |   └── 📄 IUsageProvider.hpp
-│   |
+|   |   ├── 📁 global/
+|   |   |     ├── 📄 IMetadataProvider.hpp
+|   |   |     ├── 📄 IErrorProvider.hpp
+|   |         ├── 📄 ISchedulingProvider.hpp
+│   |   |     └── 📄 IDescriptionProvider.hpp
+|   |   |
+|   |   ├── 📁 components/
+│   |   |     ├── 📄 IBatteryProvider.hpp
+│   |   |     ├── 📄 ICapacityProvider.hpp
+│   |   |     ├── 📄 IRangeProvider.hpp
+|   |   |     ├── 📄 IThermalProvider.hpp
+|   |   |     ├── 📄 ITimeEstimateProvider.hpp
+|   |   |     ├── 📄 IUnitProvider.hpp
+|   |   |     ├── 📄 IStatusProvider.hpp
+│   |   |     └── 📄 IUsageProvider.hpp
+|   |   |
+│   |   └── 📁 network/
+|   |           └── 📄 WebSocketClient.hpp
+|   |
 |   ├── 📁 enums/                        # Shared cross-platform types
 |   |    ├── 📄 BatteryState.hpp
 |   |    ├── 📄 ThermalState.hpp
@@ -141,15 +147,52 @@ The live hardware telemetry flows through three distinct stages:
 |   |
 |   |
 |   └── 📁 models/
+|        ├── 📄 BatterySnapshot.hpp
+|        ├── 📄 CPUSnapshot.hpp
+|        ├── 📄 GPUSnapshot.hpp
+|        ├── 📄 RAMSnapshot.hpp
+|        ├── 📄 StorageSnapshot.hpp
+|        ├── 📄 VirtaulRAMSnapshot.hpp
+|        ├── 📄 AppSnapshot.hpp
+│        └── 📄 NetworkSnapshot.hpp
 |
 ├── 📁 src/                           # Source Implementations (How the system does it)
 │   ├── 📁 data_access/
-│   │   ├── 📄 WindowsMetricsReader.cpp  # DAL: Windows Native API readings
-|   |   └── 📄 LinuxMetricsReader.cpp    # DAL: Linux /proc filesystem readings
-│   ├── 📁 core/
-|   |    └── 📄 MonitoringLogic.cpp      # Business Logic Layer (The loop orchestration)
-│   └── 📁 network/
-│       └── 📄 WebSocketClient.cpp    # Network Gateway: Sending payloads to NestJS
+│   │   ├── 📁 linux/                             # DAL: Linux /proc filesystem readings
+|   |   |    ├── 📄 CPUReader.cpp
+|   |   |    ├── 📄 GPUReader.cpp
+|   |   |    ├── 📄 RAMReaderReader.cpp
+|   |   |    ├── 📄 VirtaulRAMReader.cpp
+|   |   |    ├── 📄 BatteryReader.cpp
+|   |   |    ├── 📄 StorageReader.cpp
+|   |   |    ├── 📄 NetworkReader.cpp
+|   |   |    └── 📄 AppReader.hpp
+|   |   |
+|   |   └── 📁 windows/                              # DAL: Windows Native API readings
+|   |        ├── 📄 CPUReader.cpp
+|   |        ├── 📄 GPUReader.cpp
+|   |        ├── 📄 RAMReader.cpp
+|   |        ├── 📄 VirtaulRAMReader.cpp
+|   |        ├── 📄 BatteryReader.cpp
+|   |        ├── 📄 StorageReader.cpp
+|   |        ├── 📄 NetworkReader.cpp
+|   |        └── 📄 AppReader.hpp
+|   |
+│   ├── 📁 core/                        # Business Logic Layer (The loop orchestration)
+|   |    ├── 📁 Processors/
+|   |    |     ├── 📄 CPUProcessor.cpp
+|   |    |     ├── 📄 GPUProcessor.cpp
+|   |    |     ├── 📄 RAMProcessor.cpp
+|   |    |     ├── 📄 VirtaulRAMProcessor.cpp
+|   |    |     ├── 📄 BatteryProcessor.cpp
+|   |    |     ├── 📄 StorageProcessor.cpp
+|   |    |     ├── 📄 NetworkProcessor.cpp
+|   |    |     └── 📄 AppProcessor.cpp
+|   |    |
+|   |    └── 📄 mainProcessor.hpp
+|   |
+│   └── 📁 network/                      # Network Gateway: Sending payloads to NestJS
+│       └── 📄 WebSocketClient.cpp
 │
 └── 📁 platforms/                     # OS Host Environments (How the system is launched)
     ├── 📁 windows/
