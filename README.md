@@ -116,89 +116,103 @@ The live hardware telemetry flows through three distinct stages:
 │
 ├──📄 CMakeLists.txt                 # The central build configuration file (cross-platform rules)
 │
-├── 📁 include/                       # Public Headers & Interfaces (What the system can do)
-│   |── 📁 interfaces/
-|   |   ├── 📁 global/
-|   |   |     ├── 📄 IMetadataProvider.hpp
-|   |   |     ├── 📄 IErrorProvider.hpp
-|   |         ├── 📄 ISchedulingProvider.hpp
-│   |   |     └── 📄 IDescriptionProvider.hpp
-|   |   |
-|   |   ├── 📁 components/
-│   |   |     ├── 📄 IBatteryProvider.hpp
-│   |   |     ├── 📄 ICapacityProvider.hpp
-│   |   |     ├── 📄 IRangeProvider.hpp
-|   |   |     ├── 📄 IThermalProvider.hpp
-|   |   |     ├── 📄 ITimeEstimateProvider.hpp
-|   |   |     ├── 📄 IUnitProvider.hpp
-|   |   |     ├── 📄 IStatusProvider.hpp
-│   |   |     └── 📄 IUsageProvider.hpp
-|   |   |
-│   |   └── 📁 network/
-|   |           └── 📄 WebSocketClient.hpp
-|   |
-|   ├── 📁 enums/                        # Shared cross-platform types
-|   |    ├── 📄 BatteryState.hpp
-|   |    ├── 📄 ThermalState.hpp
-|   |    ├── 📄 ErrorTypes.hpp
-|   |    ├── 📄 UnitTypes.hpp
-│   |    └── 📄 StatusLevel.hpp
-|   |
-|   |
-|   |
-|   └── 📁 models/
-|        ├── 📄 BatterySnapshot.hpp
-|        ├── 📄 CPUSnapshot.hpp
-|        ├── 📄 GPUSnapshot.hpp
-|        ├── 📄 RAMSnapshot.hpp
-|        ├── 📄 StorageSnapshot.hpp
-|        ├── 📄 VirtaulRAMSnapshot.hpp
-|        ├── 📄 AppSnapshot.hpp
-│        └── 📄 NetworkSnapshot.hpp
-|
-├── 📁 src/                           # Source Implementations (How the system does it)
+├── 📁 common/                       # Public Interfaces, Enums, and Models
+│   ├── 📁 interfaces/
+│   │   ├── 📁 global/
+│   │   │   ├── 📄 IMetadataProvider.hpp
+│   │   │   ├── 📄 IErrorProvider.hpp
+│   │   │   ├── 📄 ISchedulingProvider.hpp
+│   │   │   └── 📄 IDescriptionProvider.hpp
+│   │   │
+│   │   ├── 📁 components/
+│   │   │   ├── 📄 IBatteryProvider.hpp
+│   │   │   ├── 📄 ICapacityProvider.hpp
+│   │   │   ├── 📄 IRangeProvider.hpp
+│   │   │   ├── 📄 IThermalProvider.hpp
+│   │   │   ├── 📄 ITimeEstimateProvider.hpp
+│   │   │   ├── 📄 IUnitProvider.hpp
+│   │   │   ├── 📄 IStatusProvider.hpp
+│   │   │   └── 📄 IUsageProvider.hpp
+│   │   │
+│   │   └── 📁 network/
+│   │       └── 📄 WebClientProvider.hpp
+│   │
+│   ├── 📁 enums/                    # Shared cross-platform types
+│   │   ├── 📄 BatteryState.hpp
+│   │   ├── 📄 ThermalState.hpp
+│   │   ├── 📄 ErrorTypes.hpp
+│   │   ├── 📄 UnitTypes.hpp
+│   │   └── 📄 StatusLevel.hpp
+│   │
+│   └── 📁 models/                   # Telemetry Data Structures
+│       ├── 📄 BatterySnapshot.hpp
+│       ├── 📄 CPUSnapshot.hpp
+│       ├── 📄 GPUSnapshot.hpp
+│       ├── 📄 RAMSnapshot.hpp
+│       ├── 📄 StorageSnapshot.hpp
+│       ├── 📄 VirtualRAMSnapshot.hpp
+│       ├── 📄 AppSnapshot.hpp
+│       └── 📄 NetworkSnapshot.hpp
+│
+├── 📁 include/                      # Hardware Reader Contract Declarations
+│   ├── 📁 hardwares/
+│   │   ├── 📄 CPUReader.hpp
+│   │   ├── 📄 GPUReader.hpp
+│   │   ├── 📄 RAMReader.hpp
+│   │   ├── 📄 VirtualRAMReader.hpp
+│   │   ├── 📄 BatteryReader.hpp
+│   │   ├── 📄 StorageReader.hpp
+│   │   └── 📄 NetworkReader.hpp
+│   │
+│   ├── 📁 apps/
+│   │   └── 📄 AppReader.hpp
+│   │
+│   └── 📁 network/
+│       └── 📄 WebSocketClient.hpp
+│
+├── 📁 src/                          # Source Implementations
 │   ├── 📁 data_access/
-│   │   ├── 📁 linux/                             # DAL: Linux /proc filesystem readings
-|   |   |    ├── 📄 CPUReader.cpp
-|   |   |    ├── 📄 GPUReader.cpp
-|   |   |    ├── 📄 RAMReaderReader.cpp
-|   |   |    ├── 📄 VirtaulRAMReader.cpp
-|   |   |    ├── 📄 BatteryReader.cpp
-|   |   |    ├── 📄 StorageReader.cpp
-|   |   |    ├── 📄 NetworkReader.cpp
-|   |   |    └── 📄 AppReader.hpp
-|   |   |
-|   |   └── 📁 windows/                              # DAL: Windows Native API readings
-|   |        ├── 📄 CPUReader.cpp
-|   |        ├── 📄 GPUReader.cpp
-|   |        ├── 📄 RAMReader.cpp
-|   |        ├── 📄 VirtaulRAMReader.cpp
-|   |        ├── 📄 BatteryReader.cpp
-|   |        ├── 📄 StorageReader.cpp
-|   |        ├── 📄 NetworkReader.cpp
-|   |        └── 📄 AppReader.hpp
-|   |
-│   ├── 📁 core/                        # Business Logic Layer (The loop orchestration)
-|   |    ├── 📁 Processors/
-|   |    |     ├── 📄 CPUProcessor.cpp
-|   |    |     ├── 📄 GPUProcessor.cpp
-|   |    |     ├── 📄 RAMProcessor.cpp
-|   |    |     ├── 📄 VirtaulRAMProcessor.cpp
-|   |    |     ├── 📄 BatteryProcessor.cpp
-|   |    |     ├── 📄 StorageProcessor.cpp
-|   |    |     ├── 📄 NetworkProcessor.cpp
-|   |    |     └── 📄 AppProcessor.cpp
-|   |    |
-|   |    └── 📄 mainProcessor.hpp
-|   |
-│   └── 📁 network/                      # Network Gateway: Sending payloads to NestJS
+│   │   ├── 📁 linux/                # DAL: Linux /proc filesystem readings
+│   │   │   ├── 📄 CPUReader.cpp
+│   │   │   ├── 📄 GPUReader.cpp
+│   │   │   ├── 📄 RAMReader.cpp
+│   │   │   ├── 📄 VirtualRAMReader.cpp
+│   │   │   ├── 📄 BatteryReader.cpp
+│   │   │   ├── 📄 StorageReader.cpp
+│   │   │   ├── 📄 NetworkReader.cpp
+│   │   │   └── 📄 AppReader.cpp
+│   │   │
+│   │   └── 📁 windows/              # DAL: Windows Native API readings
+│   │       ├── 📄 CPUReader.cpp
+│   │       ├── 📄 GPUReader.cpp
+│   │       ├── 📄 RAMReader.cpp
+│   │       ├── 📄 VirtualRAMReader.cpp
+│   │       ├── 📄 BatteryReader.cpp
+│   │       ├── 📄 StorageReader.cpp
+│   │       ├── 📄 NetworkReader.cpp
+│   │       └── 📄 AppReader.cpp
+│   │
+│   ├── 📁 core/                     # Business Logic Layer (The loop orchestration)
+│   │   ├── 📁 processors/
+│   │   │   ├── 📄 CPUProcessor.cpp
+│   │   │   ├── 📄 GPUProcessor.cpp
+│   │   │   ├── 📄 RAMProcessor.cpp
+│   │   │   ├── 📄 VirtualRAMProcessor.cpp
+│   │   │   ├── 📄 BatteryProcessor.cpp
+│   │   │   ├── 📄 StorageProcessor.cpp
+│   │   │   ├── 📄 NetworkProcessor.cpp
+│   │   │   └── 📄 AppProcessor.cpp
+│   │   │
+│   │   └── 📄 mainProcessor.cpp
+│   │
+│   └── 📁 network/                  # Network Gateway Layer
 │       └── 📄 WebSocketClient.cpp
 │
-└── 📁 platforms/                     # OS Host Environments (How the system is launched)
+└── 📁 platforms/                    # OS Host Environments Lifecycle
     ├── 📁 windows/
-    │   └── 📄 WindowsServiceMain.cpp # Entry point: Registers & runs as a Windows Service
+    │   └── 📄 WindowsServiceMain.cpp # Entry point: Runs as a Windows Service
     └── 📁 linux/
-        └── 📄 LinuxDaemonMain.cpp    # Entry point: Forks & runs as a Linux systemd Daemon
+        └── 📄 LinuxDaemonMain.cpp    # Entry point: Runs as a systemd Daemon
 
 ```
 
