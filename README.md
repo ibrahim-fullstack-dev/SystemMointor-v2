@@ -381,6 +381,8 @@ To ensure the telemetry platform can scale to accommodate thousands of concurren
 - **The Paradigm Shift:** Migrating upstream and downstream telemetry payloads from verbose, string-based **JSON** formats to strongly-typed **gRPC / Protocol Buffers (Protobuf)**.
 - **The Impact:** JSON sends raw text keys (like `"cpu_utilization": 45`) repeatedly every second, which wastes network packets. Protocol Buffers serialize this data into an immutable, highly compressed binary format. This transition reduces network serialization payload overhead by **up to 70%**, minimizing packet fragmentation and significantly lowering network bandwidth costs.
 
+- **Architectural Readiness (Future-Proof Design):** Thanks to the **Dependency Inversion Principle (SOLID)** enforced in the current architecture, the Business Logic Layer (`Processors`) is completely decoupled from the Network Layer via the `WebClientProvider` abstract interface. Transitioning to Protobuf/gRPC in the future will require **zero changes** to the hardware-reading logic. We will simply plug in a new `ProtobufWebSocketClient` implementation that inherits from `WebClientProvider`, leaving the core engine untouched
+
 ### ⏱️ 8.2 Event-Driven Dynamic Throttling (Resource Conservation)
 
 - **The Paradigm Shift:** Implementing a reactive feedback loop between the NestJS gateway and the remote C++ Agents using an active client detection algorithm.
@@ -406,5 +408,5 @@ To guarantee that System Monitor v2 can be consistently deployed, scaled, and ma
 ## 10. Building & Installing
 
 ```
-
+# Setup steps will be defined here
 ```
