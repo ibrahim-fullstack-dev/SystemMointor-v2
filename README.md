@@ -150,9 +150,9 @@ The live hardware telemetry flows through three distinct stages:
 |   |   |    └──📄 WebSocketClient.cpp
 |   |   |
 │   │   └── 📁 hardwares
-|   |        ├──📄 CPU.cpp                 # Executing mathematical equations for the processor
-|   |        ├──📄 RAM.cpp                 # Executing mathematical equations for the RAM
-|   |        └──📄 Network.cpp             # Executing mathematical equations for the Network
+|   |        ├──📄 CPUProcessor.cpp                 # Executing mathematical equations for the processor
+|   |        ├──📄 RAMProcessor.cpp                 # Executing mathematical equations for the RAM
+|   |        └──📄 NetworkProcessor.cpp             # Executing mathematical equations for the Network
 │   │
 │   ├── 📁 data_access/                # Platform-Specific Implementations (DAL)
 │   │   ├── 📁 linux/
