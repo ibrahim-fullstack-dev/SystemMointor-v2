@@ -44,7 +44,7 @@
 
 ## 🏗️ 2. System Design & Data Flow
 
-To ensure the system remains clean, untangled, and modular (unlike monolithic v1 implementations), System Monitor v2 adopts an asymmetrical, event-driven architecture decoupled into three standalone subsystems.
+To ensure the system remains clean, untangled, and modular, and follow S.O.L.D Principles (unlike monolithic v1 implementations), System Monitor v2 adopts an asymmetrical, event-driven architecture decoupled into three standalone subsystems.
 
 ### 🔄 2.1 End-to-End Data Pipeline
 
