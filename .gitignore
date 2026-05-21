@@ -1,0 +1,47 @@
+# ==========================================
+# 1.Compiler Uotputs (Binaries)
+# ==========================================
+build/
+out/
+bin/
+lib/
+*.o
+*.obj
+*.exe
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# ==========================================
+# 2.Envirements Developmen Files and Folders t(IDEs)
+# ==========================================
+# Visual Studio Code
+.vscode/
+!.vscode/extensions.json
+
+# Visual Studio (Windows)
+.vs/
+*.user
+*.suo
+*.sln
+*.vcxproj
+*.filters
+
+# CLion / JetBrains
+.idea/
+cmake-build-*/
+
+# ==========================================
+# 3.Temparory System Files and Folders
+# ==========================================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# ==========================================
+# 4.Sensitive Settings
+# ==========================================
+config.json
