@@ -133,9 +133,12 @@ The live hardware telemetry flows through three distinct stages:
 |   |   └── 📁 network
 |   |        └──📄 NetworkReader.hpp
 |   |
-│   ├── 📁 models/                     # Data objects / Structs / Snapshots
-│   │   ├──📄 HardwaresSnapshots.hpp
-│   │   ├──📄 AppsSnapshot.hpp
+│   ├── 📁 models/                     # Data Transfer objects (DTOs) Patterns / Structs / Snapshots
+│   │   ├──📄 CPU.hpp
+│   │   ├──📄 RAM.hpp
+|   |   ├──📄 GPU.hpp
+|   |   ├──📄 Storage.hpp
+|   |   ├──📄 Battery.hpp
 │   │   └──📄 SystemSnapshot.hpp
 |   |
 │   └── 📁 processors/                    # Declaration processors header.
