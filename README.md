@@ -122,24 +122,36 @@ The live hardware telemetry flows through three distinct stages:
 │   │   └──📄 AgentConfig.hpp
 │   ├── 📁 enums/
 │   │   └──📄 EnumsProvider.hpp
-│   ├── 📁 interfaces/                 # Pure virtual abstract classes
-│   │   ├──📄 IReaderProvider.hpp
-│   │   ├──📄 IProcessorProvider.hpp
-│   │   ├──📄 ISystemProvider.hpp
-│   │   └──📄 INetworkClientProvider.hpp
+│   ├── 📁 readers/                 # Declaration readers header.
+│   │   ├──📁 hardwares
+│   │   |    ├──📄 RAMReader.hpp
+│   │   |    ├──📄 CPUReader.hpp
+│   │   |    ├──📄 GPUReader.hpp
+|   |   |    ├──📄 StorageReader.hpp
+|   |   |    └──📄 BatteryReader.hpp
+|   |   |
+|   |   └── 📁 network
+|   |        └──📄 NetworkReader.hpp
+|   |
 │   ├── 📁 models/                     # Data objects / Structs / Snapshots
 │   │   ├──📄 HardwaresSnapshots.hpp
 │   │   ├──📄 AppsSnapshot.hpp
 │   │   └──📄 SystemSnapshot.hpp
-│   └── 📁 headers/                    # Declaration of headers
+|   |
+│   └── 📁 processors/                    # Declaration processors header.
 |       ├── 📁 core
 │       |    ├──📄 MetricsProcessor.hpp    # Declaration Orchestration business logic
 │       |    └──📄 WebSocketClient.hpp     # Declaration Network gateway implementation
-|       └── 📁 hardwares
-│            ├──📄 CPU.hpp                 # Collects tow Declarations (CPUReader + CpuProcessor) together.
-|            ├──📄 RAM.hpp                 # Collects tow Declarations (RAMReader + RamProcessor) together.
-|            └──📄 Network.hpp             # Collects tow Declarations (NetworkReader + NetworkProcessor) together.
-│
+|       ├── 📁 hardwares
+│       |    ├──📄 CPUProcessor.hpp
+|       |    ├──📄 RAMProcessor.hpp
+|       |    ├──📄 GPUProcessor.hpp
+|       |    ├──📄 StorageProcessor.hpp
+|       |    └──📄 BatteryProcessor.hpp
+|       |
+│       └── 📁 network
+|            └──📄 NetworkProcessor.hpp
+|
 ├── 📁 src/                            # 🎯 Source Implementations (.cpp)
 │   ├── 📁 config/
 │   │   └──📄 AgentConfig.cpp
