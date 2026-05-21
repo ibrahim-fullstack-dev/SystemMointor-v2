@@ -141,7 +141,7 @@ The live hardware telemetry flows through three distinct stages:
 │   └── 📁 processors/                    # Declaration processors header.
 |       ├── 📁 core
 │       |    ├──📄 MetricsProcessor.hpp    # Declaration Orchestration business logic
-│       |    └──📄 WebSocketClient.hpp     # Declaration Network gateway implementation
+│       |    └──📄 WebSocketClientProcessor.hpp     # Declaration Network gateway implementation
 |       ├── 📁 hardwares
 │       |    ├──📄 CPUProcessor.hpp
 |       |    ├──📄 RAMProcessor.hpp
