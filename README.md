@@ -22,15 +22,11 @@
 
 - **Total CPU Utilization**
 - **Dynamic Clock Speed (GHz)**
-- **Per-Core Heatmap Grid**
+- **Per-Core / Process / Thread Granularity.**
 - **Execution Mode Lifecycle Breakdown**
   - User Mode Cycles
   - Kernel Mode Contexts
   - Hardware Interrupt Signalling
-- **OS Infrastructure Metrics**
-  - Process-Level Tracking
-  - Thread-Level Demographics
-  - Hardware Topology Mapping
 
 * **🧠 RAM:** Live memory allocation, swap space, and cache usage.
 
