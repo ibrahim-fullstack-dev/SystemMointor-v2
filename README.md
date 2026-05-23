@@ -306,6 +306,14 @@ The live hardware telemetry flows through three distinct stages:
 
 - 🚀 **The Impact:** Zero server-side state overhead; the browser downloads static assets once and dedicates 100% of its focus to painting live WebSocket data charts at 60 FPS.
 
+### 🚀 Decision 5: Data-Oriented Programming (DOP) vs. Classic Polymorphic OOP
+
+- ❌ The Problem: Traditional Object-Oriented patterns bundle data with behavior into heavy objects. Spreading an array of polymorphic Core objects or pointer-chasing collections across RAM causes massive CPU Cache Misses and VTable runtime overhead, causing the background agent to run slow and experience "Cache Stalls" while waiting for RAM.
+
+- ✅ The Solution: A strict Data-Oriented Design (DOD) approach utilizing Structures of Arrays (SoA) layout inside the Data Access Layer loops. We strip virtual inheritance and dynamic allocations from fast polling routines, keeping all raw telemetry numbers sequentially aligned in flat contiguous memory blocks (std::vector or raw buffers).
+
+- 🚀 The Impact: Radical reduction in execution time due to maximum Spatial and Temporal Cache Locality. A single 64-byte CPU cache line pull automatically fetches up to 8 core metrics at once, enabling the compiler to effortlessly use SIMD Vectorization (Single Instruction, Multiple Data) to process massive system telemetry loops concurrently while staying safely below the strict < 1% CPU target.
+
 ## 🗄️ 4. Database Design (Polyglot Persistence)
 
 To handle continuous telemetry streams without causing disk I/O bottlenecks, System Monitor v2 splits its data layer into two distinct storage paradigms:
