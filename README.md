@@ -284,7 +284,9 @@ The live hardware telemetry flows through three distinct stages:
 
 ## ⚖️ 3. Architecture Decisions (ADRs)
 
-### 🧩 Decision 1: C++ Native Target vs. Managed Worker Templates
+### 🧩 3.1 Agent Project Decisions
+
+#### Decision 1: C++ Native Target vs. Managed Worker Templates
 
 - ❌ **The Problem:** Built-in IDE templates (like C# Worker Service / other languages) require heavy runtimes, consuming 30–50 MB of RAM idle with unpredictable Garbage Collection (GC) spikes.
 
@@ -292,7 +294,7 @@ The live hardware telemetry flows through three distinct stages:
 
 - 🚀 **The Impact:** Direct interaction with OS Kernel APIs (Windows API / Linux /proc), a tiny 2–5 MB RAM footprint, zero runtime dependencies, and < 1% CPU overhead.
 
-### 🔌 Decision 2: WebSockets (WSS) vs. HTTP REST Polling
+#### 🔌 Decision 2: WebSockets (WSS) vs. HTTP REST Polling
 
 - ❌ **The Problem:** Traditional HTTP REST polling creates immense network overhead by constantly opening/closing connections and repeating bulky text headers.
 
@@ -300,7 +302,17 @@ The live hardware telemetry flows through three distinct stages:
 
 - 🚀 **The Impact:** Eliminates HTTP header waste, slashes bandwidth consumption, and achieves true sub-second, full-duplex telemetry and remote control.
 
-### 🏗️ Decision 3: NestJS for the Backend Server Gateway
+#### 🚀 Decision 3: Data-Oriented Programming (DOP) vs. Classic Polymorphic OOP
+
+- ❌ **The Problem:** Traditional Object-Oriented patterns bundle data with behavior into heavy objects. Spreading an array of polymorphic Core objects or pointer-chasing collections across RAM causes massive CPU Cache Misses and VTable runtime overhead, causing the background agent to run slow and experience "Cache Stalls" while waiting for RAM.
+
+- ✅ **The Solution:** A strict Data-Oriented Design (DOD) approach utilizing Structures of Arrays (SoA) layout inside the Data Access Layer loops. We strip virtual inheritance and dynamic allocations from fast polling routines, keeping all raw telemetry numbers sequentially aligned in flat contiguous memory blocks (std::vector or raw buffers).
+
+- 🚀 **The Impact:** Radical reduction in execution time due to maximum Spatial and Temporal Cache Locality. A single 64-byte CPU cache line pull automatically fetches up to 8 core metrics at once, enabling the compiler to effortlessly use SIMD Vectorization (Single Instruction, Multiple Data) to process massive system telemetry loops concurrently while staying safely below the strict < 1% CPU target.
+
+### 🧩 3.2 Backend Project Decisions
+
+#### 🏗️ Decision 1: NestJS for the Backend Server Gateway
 
 - ❌ **The Problem:** Raw Node.js/Express servers lack structural enforcement, leading to unmaintainable code as real-time features grow.
 
@@ -308,21 +320,15 @@ The live hardware telemetry flows through three distinct stages:
 
 - 🚀 **The Impact:** It bridges the gap between high-speed asynchronous networking and strict engineering architecture, isolates the streaming engine (agent-gateway) from the health checks (background-tracker), and scales effortlessly.
 
-### 🎨 Decision 4: React SPA (Vite) vs. Next.js Framework
+### 🧩 3.2 Frontend Project Decisions
+
+#### 🎨 Decision 4: React SPA (Vite) vs. Next.js Framework
 
 - ❌ **The Problem:** Next.js introduces Server-Side Rendering (SSR) overhead, which is completely unnecessary for an internal, private real-time app with no SEO requirements.
 
 - ✅ **The Solution:** A pure client-side React Single Page Application (SPA) bundled with Vite.
 
 - 🚀 **The Impact:** Zero server-side state overhead; the browser downloads static assets once and dedicates 100% of its focus to painting live WebSocket data charts at 60 FPS.
-
-### 🚀 Decision 5: Data-Oriented Programming (DOP) vs. Classic Polymorphic OOP
-
-- ❌ The Problem: Traditional Object-Oriented patterns bundle data with behavior into heavy objects. Spreading an array of polymorphic Core objects or pointer-chasing collections across RAM causes massive CPU Cache Misses and VTable runtime overhead, causing the background agent to run slow and experience "Cache Stalls" while waiting for RAM.
-
-- ✅ The Solution: A strict Data-Oriented Design (DOD) approach utilizing Structures of Arrays (SoA) layout inside the Data Access Layer loops. We strip virtual inheritance and dynamic allocations from fast polling routines, keeping all raw telemetry numbers sequentially aligned in flat contiguous memory blocks (std::vector or raw buffers).
-
-- 🚀 The Impact: Radical reduction in execution time due to maximum Spatial and Temporal Cache Locality. A single 64-byte CPU cache line pull automatically fetches up to 8 core metrics at once, enabling the compiler to effortlessly use SIMD Vectorization (Single Instruction, Multiple Data) to process massive system telemetry loops concurrently while staying safely below the strict < 1% CPU target.
 
 ## 🗄️ 4. Database Design (Polyglot Persistence)
 
