@@ -18,24 +18,21 @@
 
 #### The system captures, processes, and visualizes the following critical telemetry metrics:
 
-**⚡ CPU:**
+**⚡ CPU Telemetry & Core Analytics:**
 
-- Total CPU Utilization.
-- Dynamic Clock Speed.
-- Per-Core / Process / Thread Granularity.
-- Execution Mode Breakdown:
+- **Total CPU Utilization**
+- **Dynamic Clock Speed (GHz)**
+- **Per-Core Heatmap Grid**
+- **Execution Mode Lifecycle Breakdown**
+  - User Mode Cycles
+  - Kernel Mode Contexts
+  - Hardware Interrupt Signalling
+- **OS Infrastructure Metrics**
+  - Process-Level Tracking
+  - Thread-Level Demographics
+  - Hardware Topology Mapping
 
-* User Mode.
-* Kernel Mode.
-* Hardware Interrupts.
-
-- System Process Analytics:
-
-* Total Active Processes.
-* Total Active Threads.
-* Total Active Cores.
-
-- **🧠 RAM:** Live memory allocation, swap space, and cache usage.
+* **🧠 RAM:** Live memory allocation, swap space, and cache usage.
 
   **🎮 GPU:** Graphics processor utilization and video memory (VRAM) consumption.
 
