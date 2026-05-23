@@ -2,6 +2,8 @@
 
 ## 📋 1. Requirements Analysis
 
+- Understand what the system must do and why:
+
 ### 🎯 1.1 (The What)
 
 **System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely, alongside remote reverse control from anywhere in the world.
@@ -16,17 +18,35 @@
 
 #### The system captures, processes, and visualizes the following critical telemetry metrics:
 
-**⚡ CPU:** Per-core utilization, clock speed, and core temperatures.
+**⚡ CPU:**
 
-**🧠 RAM:** Live memory allocation, swap space, and cache usage.
+1. Total CPU Utilization.
 
-**🎮 GPU:** Graphics processor utilization and video memory (VRAM) consumption.
+2. Dynamic Clock Speed.
 
-**🌐 Network:** Real-time upload/download bandwidth, network latency, and interface status.
+3. Per-Core / Process / Thread Granularity.
 
-**🔋 Battery:** Charge capacity, degradation/health status, and power consumption rates.
+4. Execution Mode Breakdown:
 
-**⚙️ Processes:** A full inventory of active background processes with sorting options based on resource consumption.
+- User Mode.
+- Kernel Mode.
+- Hardware Interrupts.
+
+5. System Process Analytics:
+
+- Total Active Processes.
+- Total Active Threads.
+- Total Active Cores.
+
+- **🧠 RAM:** Live memory allocation, swap space, and cache usage.
+
+  **🎮 GPU:** Graphics processor utilization and video memory (VRAM) consumption.
+
+  **🌐 Network:** Real-time upload/download bandwidth, network latency, and interface status.
+
+  **🔋 Battery:** Charge capacity, degradation/health status, and power consumption rates.
+
+  **⚙️ Processes:** A full inventory of active background processes with sorting options based on resource consumption.
 
 ### 💡1.2 (The Why)
 
