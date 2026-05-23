@@ -20,23 +20,20 @@
 
 **⚡ CPU:**
 
-1. Total CPU Utilization.
+- Total CPU Utilization.
+- Dynamic Clock Speed.
+- Per-Core / Process / Thread Granularity.
+- Execution Mode Breakdown:
 
-2. Dynamic Clock Speed.
+* User Mode.
+* Kernel Mode.
+* Hardware Interrupts.
 
-3. Per-Core / Process / Thread Granularity.
+- System Process Analytics:
 
-4. Execution Mode Breakdown:
-
-- User Mode.
-- Kernel Mode.
-- Hardware Interrupts.
-
-5. System Process Analytics:
-
-- Total Active Processes.
-- Total Active Threads.
-- Total Active Cores.
+* Total Active Processes.
+* Total Active Threads.
+* Total Active Cores.
 
 - **🧠 RAM:** Live memory allocation, swap space, and cache usage.
 
