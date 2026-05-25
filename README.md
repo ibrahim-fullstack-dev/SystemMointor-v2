@@ -124,108 +124,120 @@ The live hardware telemetry flows through three distinct stages:
 ```text
 📁 SystemMonitorAgent/
 │
-├── 📄 CMakeLists.txt                  # Central cross-platform build target automation
-├── 📄 config.json                     # Static runtime environment parameters and thresholds
+├── 📄 CMakeLists.txt
+├── 📄 config.json
 │
-├── 📁 include/                        # 🎯 Single source of truth for all project headers (.hpp)
+├── 📁 include/                               # 🎯 All Project Headers (.hpp)
 │   ├── 📁 config/
-│   │   └──📄 AgentConfig.hpp          # Manages JSON configuration ingestion
+│   │   └──📄 AgentConfig.hpp
 │   │
 │   ├── 📁 enums/
-│   │   └──📄 EnumsProvider.hpp        # Global system states, status levels, and flag enums
+│   │   └──📄 EnumsProvider.hpp
 │   │
-│   ├── 📁 readers/                    # Core abstraction interfaces for system data collection
-│   │   ├── 📁 hardwares/
-│   │   │   ├──📄 CPUReader.hpp        # Abstract interface for raw processor data collection
-│   │   │   ├──📄 RAMReader.hpp        # Abstract interface for physical memory tracking
-│   │   │   ├──📄 GPUReader.hpp        # Abstract interface for discrete/integrated graphics metrics
-│   │   │   ├──📄 StorageReader.hpp    # Abstract interface for drive volumes and partition I/O
-│   │   │   └──📄 BatteryReader.hpp    # Abstract interface for mobile device power telemetry
+│   ├── 📁 readers/                           # Data Access Layer (DAL) Interfaces
+│   │   ├── 📁 hardware/
+│   │   │   ├──📄 CPUReader.hpp
+│   │   │   ├──📄 RAMReader.hpp
+│   │   │   ├──📄 GPUReader.hpp
+│   │   │   ├──📄 StorageReader.hpp
+│   │   │   └──📄 BatteryReader.hpp
 │   │   │
 │   │   └── 📁 network/
-│   │       └──📄 NetworkReader.hpp    # Abstract interface for socket and networking adaptors
+│   │       └──📄 NetworkReader.hpp
 │   │
-│   ├── 📁 models/                     # Data Transfer Objects (DTOs) and data record snapshots
-│   │   ├── 📁 hardwares/
-│   │   │   ├──📄 CPUDTO.hpp           # Data packet container for calculated CPU timelines
-│   │   │   ├──📄 RAMDTO.hpp           # Data packet container for operational memory limits
-│   │   │   ├──📄 GPUDTO.hpp           # Data packet container for thermal and rendering metrics
-│   │   │   ├──📄 StorageDTO.hpp       # Data packet container for space and filesystem throughput
-│   │   │   └──📄 BatteryDTO.hpp       # Data packet container for power drain rates and health pct
+│   ├── 📁 models/                            # Data Models & Structure Containers
+│   │   ├── 📁 dal/                           # Raw OS-Specific Models for (Data Access Layer)
+│   │   │   ├── 📁 hardware/
+│   │   │   │   ├──📄 CPURawModel.hpp
+│   │   │   │   ├──📄 RAMRawModel.hpp
+│   │   │   │   ├──📄 GPURawModel.hpp
+│   │   │   │   ├──📄 StorageRawModel.hpp
+│   │   │   │   └──📄 BatteryRawModel.hpp
+│   │   │   │
+│   │   │   └── 📁 network/
+│   │   │       └──📄 NetworkRawModel.hpp
 │   │   │
-│   │   ├── 📁 network/
-│   │   |    └──📄 NetworkDTO.hpp       # Data packet container for tracking transfer speeds
-│   │   |
-|   |   └──📄 SystemDTO.hp               # Master DTO composing all hardware and network sub-DTOs
-|   |
-│   └── 📁 processors/                 # Business logic, lifecycle routing, and analysis interfaces
+│   │   └── 📁 bl/                            # Pure Internet Transfer DTOs for (Data Business Layer)
+│   │       ├── 📁 hardware/
+│   │       │   ├──📄 CPUDTO.hpp
+│   │       │   ├──📄 RAMDTO.hpp
+│   │       │   ├──📄 GPUDTO.hpp
+│   │       │   ├──📄 StorageDTO.hpp
+│   │       │   └──📄 BatteryDTO.hpp
+│   │       │
+│   │       ├── 📁 network/
+│   │       │   └──📄 NetworkDTO.hpp
+│   │       │
+│   │       └──📄 SystemDTO.hpp
+│   │
+│   └── 📁 logic/                        # Pure Business Logic (BL) Interfaces
 │       ├── 📁 core/
-│       │   ├──📄 MetricsProcessor.hpp # System-wide orchestration loop and DTO compiler engine
-│       │   └──📄 WebSocketClientProcessor.hpp # Outbound server telemetry gateway management
+│       │   ├──📄 MetricsProcessor.hpp
+│       │   └──📄 WebSocketClientProcessor.hpp
 │       │
-│       ├── 📁 hardwares/
-│       │   ├──📄 CPUProcessor.hpp     # Mathematical analyzer computing kernel/user delta loads
-│       │   ├──📄 RAMProcessor.hpp     # Mathematical analyzer calculating swap and paging curves
-│       │   ├──📄 GPUProcessor.hpp     # Mathematical analyzer processing graphics workload pipelines
-│       │   ├──📄 StorageProcessor.hpp # Mathematical analyzer tracing instant disk I/O rates
-│       │   └──📄 BatteryProcessor.hpp # Mathematical analyzer evaluating degradation regressions
+│       ├── 📁 hardware/
+│       │   ├──📄 CPUProcessor.hpp
+│       │   ├──📄 RAMProcessor.hpp
+│       │   ├──📄 GPUProcessor.hpp
+│       │   ├──📄 StorageProcessor.hpp
+│       │   └──📄 BatteryProcessor.hpp
 │       │
 │       └── 📁 network/
-│           └──📄 NetworkProcessor.hpp # Mathematical analyzer calculating interface line speeds
+│           └──📄 NetworkProcessor.hpp
 │
-├── 📁 src/                            # 🎯 Source implementation files (.cpp)
+├── 📁 src/                                   # 🎯 All Source Files (.cpp)
 │   ├── 📁 config/
-│   │   └──📄 AgentConfig.cpp          # Implements JSON loader validation logic
+│   │   └──📄 AgentConfig.cpp
 │   │
-│   ├── 📁 logic/                      # Isolated core computational units (100% OS-Independent math)
+│   ├── 📁 logic/                             # Business Logic Implementation (BL)
 │   │   ├── 📁 core/
-│   │   │   ├──📄 MetricsProcessor.cpp # Executes metric compilation loop dispatching
-│   │   │   └──📄 WebSocketClientProcessor.cpp # Implements the framing protocol handshake and payload transmission
+│   │   │   ├──📄 MetricsProcessor.cpp
+│   │   │   └──📄 WebSocketClientProcessor.cpp
 │   │   │
-│   │   ├── 📁 hardwares/
-│   │   │   ├──📄 CPUProcessor.cpp     # Quantifies raw processor time slicing calculations
-│   │   │   ├──📄 RAMProcessor.cpp     # Evaluates memory pressure metrics and cache layers
-│   │   │   ├──📄 GPUProcessor.cpp     # Calculates graphics clock workloads and memory allocations
-│   │   │   ├──📄 StorageProcessor.cpp # Maps absolute raw byte offsets into read/write metrics
-│   │   │   └──📄 BatteryProcessor.cpp # Maps chemistry rates into estimated remaining discharge runtimes
+│   │   ├── 📁 hardware/
+│   │   │   ├──📄 CPUProcessor.cpp
+│   │   │   ├──📄 RAMProcessor.cpp
+│   │   │   ├──📄 GPUProcessor.cpp
+│   │   │   ├──📄 StorageProcessor.cpp
+│   │   │   └──📄 BatteryProcessor.cpp
 │   │   │
-│   │   └── 📁 network/                # Perfectly aligned pure math engine for networking
-│   │       └──📄 NetworkProcessor.cpp # Transforms network bit transfers into instantaneous throughput rates
+│   │   └── 📁 network/
+│   │       └──📄 NetworkProcessor.cpp
 │   │
-│   ├── 📁 data_access/                # Platform-Specific Hardware Polling (Data Access Layer - DAL)
-│   │   ├── 📁 linux/                  # Native Linux implementation configurations
-│   │   │   ├── 📁 hardwares/
-│   │   │   │   ├──📄 CPUReader.cpp    # Directly parses file nodes from /proc/stat
-│   │   │   │   ├──📄 RAMReader.cpp    # Directly parses file nodes from /proc/meminfo
-│   │   │   │   ├──📄 GPUReader.cpp    # Interrogates driver properties via sysfs/DRM or NVML
-│   │   │   │   ├──📄 StorageReader.cpp# Invokes statvfs system calls for filesystem layouts
-│   │   │   │   └──📄 BatteryReader.cpp# Directly parses metrics from /sys/class/power_supply
+│   ├── 📁 data_access/                       # Platform-Specific Data Collection (DAL)
+│   │   ├── 📁 linux/
+│   │   │   ├── 📁 hardware/
+│   │   │   │   ├──📄 CPUReader.cpp
+│   │   │   │   ├──📄 RAMReader.cpp
+│   │   │   │   ├──📄 GPUReader.cpp
+│   │   │   │   ├──📄 StorageReader.cpp
+│   │   │   │   └──📄 BatteryReader.cpp
 │   │   │   │
-│   │   │   └── 📁 network/            # Fixed network subfolder layer for Linux architecture
-│   │   │       └──📄 NetworkReader.cpp# Extracts hardware counters via parsing /proc/net/dev
+│   │   │   └── 📁 network/
+│   │   │       └──📄 NetworkReader.cpp
 │   │   │
-│   │   └── 📁 windows/                # Native Microsoft Windows implementation configurations
-│   │       ├── 📁 hardwares/
-│   │       │   ├──📄 CPUReader.cpp    # Polls native Windows Kernel structures via GetSystemTimes / PDH
-│   │       │   ├──📄 RAMReader.cpp    # Evaluates physical memory spaces via GlobalMemoryStatusEx
-│   │       │   ├──📄 GPUReader.cpp    # Queries rendering contexts via DXGI or NVML pipelines
-│   │       │   ├──📄 StorageReader.cpp# Leverages low-level Win32 GetDiskFreeSpaceEx file system calls
-│   │       │   └──📄 BatteryReader.cpp# Captures active Win32 APC power fields via GetSystemPowerStatus
+│   │   └── 📁 windows/
+│   │       ├── 📁 hardware/
+│   │       │   ├──📄 CPUReader.cpp
+│   │       │   ├──📄 RAMReader.cpp
+│   │       │   ├──📄 GPUReader.cpp
+│   │       │   ├──📄 StorageReader.cpp
+│   │       │   └──📄 BatteryReader.cpp
 │   │       │
-│   │       └── 📁 network/            # Fixed network subfolder layer for Windows architecture
-│   │           └──📄 NetworkReader.cpp# Extracts networking adaptors via the GetAdaptersAddresses API
+│   │       └── 📁 network/
+│   │           └──📄 NetworkReader.cpp
 │   │
-│   └── 📄 main.cpp                    # Local standalone terminal daemon entry point for testing/debugging
+│   └── 📄 main.cpp
 │
-├── 📁 platforms/                      # OS Service Wrappers to run as background daemons
+├── 📁 platforms/                             # OS Background Service Wrappers
 │   ├── 📁 windows/
-│   │   └── 📄 WindowsServiceMain.cpp  # Integrates main execution flow to run as a native Win32 Service
+│   │   └── 📄 WindowsServiceMain.cpp
 │   └── 📁 linux/
-│       └── 📄 LinuxDaemonMain.cpp     # Integrates main execution flow to spawn as a systemd background worker
+│       └── 📄 LinuxDaemonMain.cpp
 │
-└── 📁 tests/                          # Automated Verification Target Suites
-    ├── 📁 unit/                       # Isolated mocks validating pure logic algorithms inside src/logic/
-    └── 📁 integration/                # Platform-bound hardware checks checking native readers on the host OS                         # Unit and Integration tests
+└── 📁 tests/                                 # Automated Test Target Suites
+    ├── 📁 unit/
+    └── 📁 integration/
 ```
 
 2. NestJS GATEWAY SERVER
@@ -322,7 +334,7 @@ The live hardware telemetry flows through three distinct stages:
 
 ### 🧩 3.2 Frontend Project Decisions
 
-#### 🎨 Decision 4: React SPA (Vite) vs. Next.js Framework
+#### 🎨 Decision 1: React SPA (Vite) vs. Next.js Framework
 
 - ❌ **The Problem:** Next.js introduces Server-Side Rendering (SSR) overhead, which is completely unnecessary for an internal, private real-time app with no SEO requirements.
 
