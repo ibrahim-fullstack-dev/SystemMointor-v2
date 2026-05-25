@@ -8,42 +8,67 @@ namespace System {
 
 		namespace Hardware {
 
-			//  To prevent random memory allocation, a fixed size was specified that is compatible with high - performance processing servers.
-			constexpr size_t MAX_SUPPORTED_CORES = 128;
+			namespace CPU {
 
-			enum class enCorePerformanceType : uint8_t {
-				Unified = 0,
-				Performance = 1,
-				Efficiency = 2
-			};
 
-			//  Structure of Arrays (SoA) - Pure Flat Plain Data
-			struct stCPUDTO
-			{
-				// Parallel arrays: Fetching a single cache line (64 bytes) pulls 8 cores together in the same clock pulse
-				std::array<double, MAX_SUPPORTED_CORES> coreLoads{};
+				// To prevent random memory allocation, a fixed size was specified that is compatible with high - performance processing servers.
 
-				std::array<uint32_t, MAX_SUPPORTED_CORES> logicalIds{};
+				constexpr size_t MAX_SUPPORTED_CORES = 128;
+				constexpr size_t MAX_MONITORED_PROCESSES = 128;
+				constexpr size_t MAX_MONITORED_THREADS = 128;
 
-				std::array<enCorePerformanceType, MAX_SUPPORTED_CORES> coreTypes{}; 
+				enum class enCorePerformanceType : uint8_t {
+					Unified = 0,
+					Performance = 1,
+					Efficiency = 2
+				};
 
-				// Padding =%0
-				//  Total interface counters(Hero Widgets)
-				double totalCpuUtilization = 0.0;
-				double currentClockSpeedGhz = 0.0;
-				double userTimePct = 0.0;
-				double kernelTimePct = 0.0;
-				double interruptTimePct = 0.0;
+				struct stInterfaceCounters
+				{
+					double totalCpuUtilization = 0.0;
+					double currentClockSpeedGhz = 0.0;
+					double userTimePct = 0.0;
+					double kernelTimePct = 0.0;
+					double interruptTimePct = 0.0;
+				};
 
-				//  Production line times (Timeline Analytics)
-				uint32_t activeCoreCount = 0;
-				uint32_t totalActiveProcesses = 0;
-				uint32_t totalActiveThreads = 0;
+				struct stTimelineAnalytics
+				{
+					uint32_t activeCoreCount = 0;
+					uint32_t totalActiveProcesses = 0;
+					uint32_t totalActiveThreads = 0;
+				};
 
-				//  Instant query time wrapper
-				unsigned long long queryTimestampUnixMilli = 0;
-			};
+				struct stCPUDTO
+				{
+					stInterfaceCounters InterfaceCounters;
+					stTimelineAnalytics TimelineAnalytics;
+				};
 
+				struct stCoreDTO
+				{
+					std::array<double, MAX_SUPPORTED_CORES> componentLoads{};
+					std::array<uint32_t, MAX_SUPPORTED_CORES> logicalIds{};
+					std::array<enCorePerformanceType, MAX_SUPPORTED_CORES> coreTypes{};
+				};
+
+				struct stProcessDTO
+				{
+					std::array<double, MAX_MONITORED_PROCESSES> cpuUsagePercents{};
+					std::array<uint32_t, MAX_MONITORED_PROCESSES> processIds{};
+					std::array<std::array<char, 32>, MAX_MONITORED_PROCESSES> processNames{};
+				};
+
+				struct stThreadDTO
+				{
+					uint32_t parentProcessId = 0;
+					uint32_t activeThreadsCount = 0;
+				
+					std::array<double, MAX_MONITORED_THREADS> threadCpuUsages{};
+					std::array<uint32_t, MAX_MONITORED_THREADS> threadIds{};
+				};
+
+			}
 		}
 	}
 }
