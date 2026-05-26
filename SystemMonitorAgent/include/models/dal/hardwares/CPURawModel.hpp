@@ -1,9 +1,9 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include "../../../config/SystemLimits.hpp"
-#include "../RawCommon.hpp"
-#include "../../../enums/EnumsProvider.hpp"
+#include "config/SystemLimits.hpp"
+#include "models/dal/RawCommon.hpp"
+#include "enums/EnumsProvider.hpp"
 
 namespace System {
 
