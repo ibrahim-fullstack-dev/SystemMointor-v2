@@ -129,7 +129,8 @@ The live hardware telemetry flows through three distinct stages:
 │
 ├── 📁 include/                               # 🎯 All Project Headers (.hpp)
 │   ├── 📁 config/
-│   │   └──📄 AgentConfig.hpp
+│   │   ├──📄 AgentConfig.hpp
+|   |   └──📄 SystemLimits.hpp
 │   │
 │   ├── 📁 enums/
 │   │   └──📄 EnumsProvider.hpp
@@ -154,8 +155,10 @@ The live hardware telemetry flows through three distinct stages:
 │   │   │   │   ├──📄 StorageRawModel.hpp
 │   │   │   │   └──📄 BatteryRawModel.hpp
 │   │   │   │
-│   │   │   └── 📁 network/
-│   │   │       └──📄 NetworkRawModel.hpp
+│   │   │   ├── 📁 network/
+│   │   │   |    └──📄 NetworkRawModel.hpp
+|   |   |   |
+|   |   |   └──📄 RawCommon.hpp
 │   │   │
 │   │   └── 📁 bl/                            # Pure Internet Transfer DTOs for (Data Business Layer)
 │   │       ├── 📁 hardware/
