@@ -2,8 +2,11 @@
 #include <cstdint>
 
 namespace System {
+
     namespace Model {
+
         namespace Hardware {
+
             namespace DAL {
 
                 struct stTimestamp

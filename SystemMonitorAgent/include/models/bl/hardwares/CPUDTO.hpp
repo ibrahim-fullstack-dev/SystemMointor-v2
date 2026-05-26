@@ -1,6 +1,8 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include "../../../config/SystemLimits.hpp"
+#include "../../../enums/EnumsProvider.hpp"
 
 namespace System {
 
@@ -8,66 +10,56 @@ namespace System {
 
 		namespace Hardware {
 
-			namespace CPU {
+			namespace BLL {
 
+				namespace CPU {
 
-				// To prevent random memory allocation, a fixed size was specified that is compatible with high - performance processing servers.
+					struct stInterfaceCounters
+					{
+						double totalCpuUtilization = 0.0;
+						double currentClockSpeedGhz = 0.0;
+						double userTimePct = 0.0;
+						double kernelTimePct = 0.0;
+						double interruptTimePct = 0.0;
+					};
 
-				constexpr size_t MAX_SUPPORTED_CORES = 128;
-				constexpr size_t MAX_MONITORED_PROCESSES = 128;
-				constexpr size_t MAX_MONITORED_THREADS = 128;
+					struct stTimelineAnalytics
+					{
+						uint32_t activeCoreCount = 0;
+						uint32_t totalActiveProcesses = 0;
+						uint32_t totalActiveThreads = 0;
+					};
 
-				enum class enCorePerformanceType : uint8_t {
-					Unified = 0,
-					Performance = 1,
-					Efficiency = 2
-				};
+					struct stCPUDTO
+					{
+						stInterfaceCounters InterfaceCounters;
+						stTimelineAnalytics TimelineAnalytics;
+					};
 
-				struct stInterfaceCounters
-				{
-					double totalCpuUtilization = 0.0;
-					double currentClockSpeedGhz = 0.0;
-					double userTimePct = 0.0;
-					double kernelTimePct = 0.0;
-					double interruptTimePct = 0.0;
-				};
+					struct stCoreDTO
+					{
+						std::array<double, Config::Limits::MAX_SUPPORTED_CORES> componentLoads{};
+						std::array<uint32_t, Config::Limits::MAX_SUPPORTED_CORES> logicalIds{};
+						std::array<Enums::enCorePerformanceType, Config::Limits::MAX_SUPPORTED_CORES> coreTypes{};
+					};
 
-				struct stTimelineAnalytics
-				{
-					uint32_t activeCoreCount = 0;
-					uint32_t totalActiveProcesses = 0;
-					uint32_t totalActiveThreads = 0;
-				};
+					struct stProcessDTO
+					{
+						std::array<double, Config::Limits::MAX_MONITORED_PROCESSES> cpuUsagePercents{};
+						std::array<uint32_t, Config::Limits::MAX_MONITORED_PROCESSES> processIds{};
+						std::array<std::array<char, 32>, Config::Limits::MAX_MONITORED_PROCESSES> processNames{};
+					};
 
-				struct stCPUDTO
-				{
-					stInterfaceCounters InterfaceCounters;
-					stTimelineAnalytics TimelineAnalytics;
-				};
+					struct stThreadDTO
+					{
+						uint32_t parentProcessId = 0;
+						uint32_t activeThreadsCount = 0;
 
-				struct stCoreDTO
-				{
-					std::array<double, MAX_SUPPORTED_CORES> componentLoads{};
-					std::array<uint32_t, MAX_SUPPORTED_CORES> logicalIds{};
-					std::array<enCorePerformanceType, MAX_SUPPORTED_CORES> coreTypes{};
-				};
+						std::array<double, Config::Limits::MAX_MONITORED_THREADS> threadCpuUsages{};
+						std::array<uint32_t, Config::Limits::MAX_MONITORED_THREADS> threadIds{};
+					};
 
-				struct stProcessDTO
-				{
-					std::array<double, MAX_MONITORED_PROCESSES> cpuUsagePercents{};
-					std::array<uint32_t, MAX_MONITORED_PROCESSES> processIds{};
-					std::array<std::array<char, 32>, MAX_MONITORED_PROCESSES> processNames{};
-				};
-
-				struct stThreadDTO
-				{
-					uint32_t parentProcessId = 0;
-					uint32_t activeThreadsCount = 0;
-				
-					std::array<double, MAX_MONITORED_THREADS> threadCpuUsages{};
-					std::array<uint32_t, MAX_MONITORED_THREADS> threadIds{};
-				};
-
+				}
 			}
 		}
 	}
