@@ -38,7 +38,8 @@ namespace System {
                     {
                         stCPUSystemRawTicks rawTicks;
                         stCPUSystemRawAnalytics rawAnalytics;
-                    }
+						stTimestamp snapshotTimestamp;
+                    };
 
 					// 2. Core raw counters (serves stCoreDTO)
                     struct stCoreRawSnapshot
@@ -71,7 +72,7 @@ namespace System {
                         uint32_t parentProcessId = 0;
                         uint32_t activeThreadsCount = 0;
 
-                        std::array<uint32_t, MAX_MONITORED_THREADS> threadIds{};
+                        std::array<uint32_t, Config::Limits::MAX_MONITORED_THREADS> threadIds{};
                         std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadKernelTicks{};
                         std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadUserTicks{};
 
