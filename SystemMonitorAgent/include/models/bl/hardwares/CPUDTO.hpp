@@ -1,8 +1,8 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include "../../../config/SystemLimits.hpp"
-#include "../../../enums/EnumsProvider.hpp"
+#include "config/SystemLimits.hpp"
+#include "enums/EnumsProvider.hpp"
 
 namespace System {
 
