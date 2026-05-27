@@ -15,8 +15,8 @@ namespace System {
 
                 namespace CPU {
 
-                    // 1.Interface raw counters (serves stInterfaceCounters)
-                    struct stCPUSystemRawTicks
+                    // Interface raw counters (serves stInterfaceCounters)
+                    struct stCPURawTicks
                     {
                         uint64_t rawIdleTicks = 0;
                         uint64_t rawKernelTicks = 0;
@@ -24,21 +24,31 @@ namespace System {
                         uint64_t rawInterruptTicks = 0;
                     };
 
-					// 2. Timeline raw analytics (serves stTimelineAnalytics)
-                    struct stCPUSystemRawAnalytics
+					// Static info.
+                    struct stCPUStaticRawAnalytics
                     {
-                        uint32_t currentClockSpeedMhz = 0;
+                        std::array<wchar_t, 16>  ProcessorArchitecture{};
+                        std::array<wchar_t, 128> ProcessorNameString{};
                         uint32_t activeCoreCount = 0;
+                        uint32_t currentClockSpeedMhz = 0;
+                    };
+
+                    // Update inside loop
+                    struct stCPUDynamicRawAnalytics
+                    {
+                        stCPURawTicks rawTicks;
                         uint32_t totalActiveProcesses = 0;
                         uint32_t totalActiveThreads = 0;
+                        uint32_t totalOpenedHandles = 0;
+
+                        stTimestamp snapshotTimestamp;
                     };
 
 					// 3. The complete raw snapshot for CPU (serves stCPUDTO)
                     struct stCPURawSnapshot
                     {
-                        stCPUSystemRawTicks rawTicks;
-                        stCPUSystemRawAnalytics rawAnalytics;
-						stTimestamp snapshotTimestamp;
+                        stCPUStaticRawAnalytics  staticAnalytics;
+                        stCPUDynamicRawAnalytics dynamicAnalytics;
                     };
 
 					// 2. Core raw counters (serves stCoreDTO)
