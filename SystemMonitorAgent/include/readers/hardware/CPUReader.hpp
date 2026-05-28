@@ -1,50 +1,41 @@
 #pragma once
-
-// Prevent Pre-Compiled Models. 
-namespace System {
-
-    namespace Model {
-
-        namespace Hardware {
-
-            namespace DAL {
-
-                namespace CPU {
-                    struct stCPURawSnapshot;
-                    struct stCoreRawSnapshot;
-                    struct stProcessRawSnapshot;
-                    struct stThreadRawSnapshot;
-                }
-            }
-        }
-    }
-}
+#include "models/dal/hardware/CPURawModel.hpp"
 
 namespace System {
 
     namespace Reader {
 
-        namespace Hardware {
+        namespace CPU {
 
-            namespace CPUReader {
+            class CPUReader {
 
-                bool FetchCPUSnapshot(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
-            }
+                
+            public:
 
-            namespace CoresReader {
+                 CpuReader();
+                ~CpuReader() = default;
+
+                bool FetchCPUTicks(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+
+                bool FetchStaticAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+
+                bool FetchDynamicAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+
+                bool FetchCPURawSnapshot(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+            };
+
+            class CoresReader {
 
                 bool FetchCoreSnapshot(Model::Hardware::DAL::CPU::stCoreRawSnapshot& outSnapshot);
-            }
+            };
 
-            namespace ProcessesReader {
+            class ProcessesReader {
                 bool FetchProcessSnapshot(Model::Hardware::DAL::CPU::stProcessRawSnapshot& outSnapshot);
-            }
+            };
 
-            namespace ThreadsReader {
+            class ThreadsReader {
                 bool FetchThreadSnapshot(Model::Hardware::DAL::CPU::stThreadRawSnapshot& outSnapshot);
-            }
-
+            };
         }
-
     }
 }
