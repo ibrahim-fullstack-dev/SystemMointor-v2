@@ -18,7 +18,7 @@ namespace System {
                 return (static_cast<uint64_t>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
             }
 
-            bool CPUReader::FetchStaticAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
+            bool CPUReader::FetchStaticAnalytics(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
                 // Fetch Cores and Architecture
                 SYSTEM_INFO sysInfo;
                 GetSystemInfo(&sysInfo);
@@ -55,7 +55,7 @@ namespace System {
                 return true;
             }
 
-            bool CPUReader::FetchCPUTicks(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
+            bool CPUReader::FetchCPUTicks(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
 
                 FILETIME idleTime, kernelTime, userTime;
                 if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) return false;
@@ -68,7 +68,7 @@ namespace System {
                 return true;
             }
 
-            bool CPUReader::FetchDynamicAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
+            bool CPUReader::FetchDynamicAnalytics(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
 
                 PERFORMANCE_INFORMATION perfInfo;
                 perfInfo.cb = sizeof(PERFORMANCE_INFORMATION);
@@ -87,7 +87,7 @@ namespace System {
 
             }
 
-            bool CPUReader::FetchCPURawSnapshot(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
+            bool CPUReader::FetchCPURawSnapshot(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
 
                 return (FetchCPUTicks(outSnapshot) && FetchCPUDynamicAnalytics(outSnapshot));
             }

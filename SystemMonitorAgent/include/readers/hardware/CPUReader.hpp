@@ -15,13 +15,13 @@ namespace System {
                  CpuReader();
                 ~CpuReader() = default;
 
-                bool FetchCPUTicks(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+                bool FetchCPUTicks(Model::Raw::CPU::& outSnapshot);
 
-                bool FetchStaticAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+                bool FetchStaticAnalytics(Model::Raw::CPU::& outSnapshot);
 
-                bool FetchDynamicAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+                bool FetchDynamicAnalytics(Model::Raw::CPU::& outSnapshot);
 
-                bool FetchCPURawSnapshot(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot);
+                bool FetchCPURawSnapshot(Model::Raw::CPU::& outSnapshot);
             };
 
             class CoresReader {

@@ -7,7 +7,7 @@
 
 namespace System {
 
-    namespace Models {
+    namespace Model {
 
         namespace Raw {
 
