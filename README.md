@@ -107,37 +107,29 @@ The live hardware telemetry flows through three distinct stages:
 │   ├── 📁 models/                       # Pure Containers
 │   │   ├── 📁 raw/                      # OS Raw Models
 │   │   └── 📁 dto/                      # Clean DTOs
-|   |
 │   ├── 📁 interfaces/                   # Pure Inrefaces.
 │   │   └── 📁 processors/
-│   │
 │   ├── 📁 readers/                      # DAL Headers.
 │   │   ├── 📁 hardware/
 │   │   └── 📁 network/
-│   │
 │   └──📁 processors/                   # BL Headers.
 │       ├── 📁 core/
 │       ├── 📁 hardware/
 |       └── 📁 network/
-│
 ├── 📁 src/                              # 🎯 Implementation Source Files (.cpp)
 │   ├── 📁 config/
-│   │
 │   ├── 📁 readers/
 │   │   ├── 📁 windows/
 │   │   └── 📁 linux/
-│   │
 │   ├──📁 processors/
 │   |   ├── 📁 core/
 │   |   ├── 📁 hardware/
 |   |   └── 📁 network/
-|   |
 |   └── 📄 main.cpp
-|
 ├── 📁 platforms/                             # OS Background Service Wrappers
 │   ├── 📁 windows/
 │   └── 📁 linux/
-│
+├── 📁 build/
 └── 📁 tests/                                 # Automated Test Target Suites
     ├── 📁 unit/
     └── 📁 integration/
