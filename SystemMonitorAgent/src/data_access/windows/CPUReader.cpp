@@ -1,93 +1,98 @@
 #include "readers/hardware/CPUReader.hpp"
-#include "models/dal/hardware/CPURawModel.hpp" 
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <Windows.h>
+#include<psapi.h>
+#include <cstring>
 
 namespace System {
 
     namespace Reader {
 
-        namespace Hardware {
+        namespace CPU {
 
-           
-            namespace CPUReader {
-
-                bool FetchCPUSnapshot(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
-
-
-                    outSnapshot.rawTicks.rawIdleTicks = 0;
-                    outSnapshot.rawTicks.rawKernelTicks = 0;
-                    outSnapshot.rawTicks.rawUserTicks = 0;
-                    outSnapshot.rawTicks.rawInterruptTicks = 0;
-
-                    outSnapshot.rawAnalytics.currentClockSpeedMhz = 0;
-                    outSnapshot.rawAnalytics.activeCoreCount = 0;
-                    outSnapshot.rawAnalytics.totalActiveProcesses = 0;
-                    outSnapshot.rawAnalytics.totalActiveThreads = 0;
-
-                    outSnapshot.snapshotTimestamp.rawSystemTimeTimestamp = 0;
-
-                    return true; 
-                }
+            inline uint64_t CPUReader::ConvertFileTimeToUInt64(const FILETIME& ft) {
+                return (static_cast<uint64_t>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
             }
 
+            bool CPUReader::FetchStaticAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
+                // Fetch Cores and Architecture
+                SYSTEM_INFO sysInfo;
+                GetSystemInfo(&sysInfo);
+                outSnapshot.staticAnalytics.activeCoreCount = sysInfo.dwNumberOfProcessors;
 
-            namespace CoresReader {
-
-                bool FetchCoreSnapshot(Model::Hardware::DAL::CPU::stCoreRawSnapshot& outSnapshot) {
-
-
-                    for (size_t i = 0; i < Config::Limits::MAX_SUPPORTED_CORES; ++i) {
-                        outSnapshot.rawCoreIdleTicks[i] = 0;
-                        outSnapshot.rawCoreKernelTicks[i] = 0;
-                        outSnapshot.rawCoreUserTicks[i] = 0;
-
-                        outSnapshot.logicalIds[i] = static_cast<uint32_t>(i);
-                        outSnapshot.coreTypes[i] = Enums::enCorePerformanceType::Unified;
-                    }
-
-                    outSnapshot.snapshotTimestamp.rawSystemTimeTimestamp = 0;
-                    return true;
+                // Fetch Processor Architecture
+                const wchar_t* archText = L"Unknown";
+                switch (sysInfo.wProcessorArchitecture) {
+                case PROCESSOR_ARCHITECTURE_AMD64: archText = L"x64";    break;
+                case PROCESSOR_ARCHITECTURE_ARM64: archText = L"ARM64";  break;
+                case PROCESSOR_ARCHITECTURE_INTEL: archText = L"x86";    break;
                 }
+
+                wcscpy_s(outSnapshot.staticAnalytics.ProcessorArchitecture.data(),
+                    outSnapshot.staticAnalytics.ProcessorArchitecture.size(),
+                    archText);
+
+                // Fetch Processor name and frequency from Registry
+                DWORD mhzSpeed = 0;
+                DWORD dataSize = sizeof(mhzSpeed);
+                RegGetValueW(HKEY_LOCAL_MACHINE, L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", L"~MHz", RRF_RT_REG_DWORD, NULL, &mhzSpeed, &dataSize);
+                outSnapshot.staticAnalytics.currentClockSpeedMhz = static_cast<uint32_t>(mhzSpeed);
+
+                DWORD stringBufferSizeBytes = static_cast<DWORD>(outSnapshot.staticAnalytics.ProcessorNameString.size() * sizeof(wchar_t));
+
+                RegGetValueW(HKEY_LOCAL_MACHINE,
+                    L"HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0",
+                    L"ProcessorNameString",
+                    RRF_RT_REG_SZ,
+                    NULL,
+                    outSnapshot.staticAnalytics.ProcessorNameString.data(),
+                    &stringBufferSizeBytes);
+
+                return true;
             }
 
-            namespace ProcessesReader {
+            bool CPUReader::FetchCPUTicks(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
 
-                bool FetchProcessSnapshot(Model::Hardware::DAL::CPU::stProcessRawSnapshot& outSnapshot) {
+                FILETIME idleTime, kernelTime, userTime;
+                if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) return false;
+
+                outSnapshot.dynamicAnalytics.rawTicks.rawIdleTicks = ConvertFileTimeToUInt64(idleTime);
+                outSnapshot.dynamicAnalytics.rawTicks.rawKernelTicks = ConvertFileTimeToUInt64(kernelTime);
+                outSnapshot.dynamicAnalytics.rawTicks.rawUserTicks = ConvertFileTimeToUInt64(userTime);
 
 
-                    for (size_t i = 0; i < Config::Limits::MAX_MONITORED_PROCESSES; ++i) {
-                        outSnapshot.rawProcessKernelTicks[i] = 0;
-                        outSnapshot.rawProcessUserTicks[i] = 0;
-                        outSnapshot.processIds[i] = 0;
-
-
-                        outSnapshot.processNames[i].fill('\0');
-                    }
-
-                    outSnapshot.snapshotTimestamp.rawSystemTimeTimestamp = 0;
-                    return true;
-                }
+                return true;
             }
 
+            bool CPUReader::FetchDynamicAnalytics(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
 
-            namespace ThreadsReader {
+                PERFORMANCE_INFORMATION perfInfo;
+                perfInfo.cb = sizeof(PERFORMANCE_INFORMATION);
 
-                bool FetchThreadSnapshot(Model::Hardware::DAL::CPU::stThreadRawSnapshot& outSnapshot) {
+                LARGE_INTEGER qpcTime;
+                QueryPerformanceCounter(&qpcTime);
+                outSnapshot.dynamicAnalytics.snapshotTimestamp.rawSystemTimeTimestamp = static_cast<uint64_t>(qpcTime.QuadPart);
 
-
-                    outSnapshot.parentProcessId = 0;
-                    outSnapshot.activeThreadsCount = 0;
-
-                    for (size_t i = 0; i < Config::Limits::MAX_MONITORED_THREADS; ++i) {
-                        outSnapshot.threadIds[i] = 0;
-                        outSnapshot.rawThreadKernelTicks[i] = 0;
-                        outSnapshot.rawThreadUserTicks[i] = 0;
-                    }
-
-                    outSnapshot.snapshotTimestamp.rawSystemTimeTimestamp = 0;
+                if (GetPerformanceInfo(&perfInfo, sizeof(perfInfo))) {
+                    outSnapshot.dynamicAnalytics.totalActiveProcesses = static_cast<uint32_t>(perfInfo.ProcessCount);
+                    outSnapshot.dynamicAnalytics.totalActiveThreads = static_cast<uint32_t>(perfInfo.ThreadCount);
+                    outSnapshot.dynamicAnalytics.totalOpenedHandles = static_cast<uint32_t>(perfInfo.HandleCount);
                     return true;
                 }
+                return false;
+
+            }
+
+            bool CPUReader::FetchCPURawSnapshot(Model::Hardware::DAL::CPU::stCPURawSnapshot& outSnapshot) {
+
+                return (FetchCPUTicks(outSnapshot) && FetchCPUDynamicAnalytics(outSnapshot));
             }
 
         }
+
     }
 }
