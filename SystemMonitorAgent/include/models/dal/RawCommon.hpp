@@ -5,16 +5,13 @@ namespace System {
 
     namespace Model {
 
-        namespace Hardware {
+        namespace RawCommon {
 
-            namespace DAL {
+            struct stTimestamp
+            {
+                uint64_t rawSystemTimeTimestamp = 0;
+            };
 
-                struct stTimestamp
-                {
-                    uint64_t rawSystemTimeTimestamp = 0;
-                };
-
-            }
         }
     }
 }
