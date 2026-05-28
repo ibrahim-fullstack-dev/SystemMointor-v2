@@ -4,8 +4,6 @@
 
 ## 📋 1. Requirements Analysis
 
-- Understand what the system must do and why:
-
 **🎯 1.1 (The What)**
 
 - It is a production line consisting of three main parts:
@@ -32,7 +30,7 @@
 
 - Design overall solution and how components work together:
 
-### 🔄 2.1 End-to-End Data Pipeline
+**🔄 2.1 End-to-End Data Pipeline**
 
 The live hardware telemetry flows through three distinct stages:
 
@@ -93,7 +91,7 @@ The live hardware telemetry flows through three distinct stages:
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 📝 2.2 Structural Breakdown & Component Descriptions
+**📝 2.2 Structural Breakdown & Component Descriptions:**
 
 1. C++ SYSTEM MONITOR AGENT
 
@@ -102,175 +100,47 @@ The live hardware telemetry flows through three distinct stages:
 │
 ├── 📄 CMakeLists.txt
 ├── 📄 config.json
-│
-├── 📁 include/                               # 🎯 All Project Headers (.hpp)
+|
+├── 📁 include/                          # 🎯 All Headers Files (.hpp)
 │   ├── 📁 config/
-│   │   ├──📄 AgentConfig.hpp
-|   |   └──📄 SystemLimits.hpp
-│   │
 │   ├── 📁 enums/
-│   │   └──📄 EnumsProvider.hpp
+│   ├── 📁 models/                       # Pure Containers
+│   │   ├── 📁 raw/                      # OS Raw Models
+│   │   └── 📁 dto/                      # Clean DTOs
+|   |
+│   ├── 📁 interfaces/                   # Pure Inrefaces.
+│   │   └── 📁 processors/
 │   │
-│   ├── 📁 readers/                           # Data Access Layer (DAL) Interfaces
+│   ├── 📁 readers/                      # DAL Headers.
 │   │   ├── 📁 hardware/
-│   │   │   ├──📄 CPUReader.hpp
-│   │   │   ├──📄 RAMReader.hpp
-│   │   │   ├──📄 GPUReader.hpp
-│   │   │   ├──📄 StorageReader.hpp
-│   │   │   └──📄 BatteryReader.hpp
-│   │   │
 │   │   └── 📁 network/
-│   │       └──📄 NetworkReader.hpp
 │   │
-│   ├── 📁 models/                            # Data Models & Structure Containers
-│   │   ├── 📁 dal/                           # Raw OS-Specific Models for (Data Access Layer)
-│   │   │   ├── 📁 hardware/
-│   │   │   │   ├──📄 CPURawModel.hpp
-│   │   │   │   ├──📄 RAMRawModel.hpp
-│   │   │   │   ├──📄 GPURawModel.hpp
-│   │   │   │   ├──📄 StorageRawModel.hpp
-│   │   │   │   └──📄 BatteryRawModel.hpp
-│   │   │   │
-│   │   │   ├── 📁 network/
-│   │   │   |    └──📄 NetworkRawModel.hpp
-|   |   |   |
-|   |   |   └──📄 RawCommon.hpp
-│   │   │
-│   │   └── 📁 bl/                            # Pure Internet Transfer DTOs for (Data Business Layer)
-│   │       ├── 📁 hardware/
-│   │       │   ├──📄 CPUDTO.hpp
-│   │       │   ├──📄 RAMDTO.hpp
-│   │       │   ├──📄 GPUDTO.hpp
-│   │       │   ├──📄 StorageDTO.hpp
-│   │       │   └──📄 BatteryDTO.hpp
-│   │       │
-│   │       ├── 📁 network/
-│   │       │   └──📄 NetworkDTO.hpp
-│   │       │
-│   │       └──📄 SystemDTO.hpp
-│   │
-│   └── 📁 logic/                        # Pure Business Logic (BL) Interfaces
+│   └──📁 processors/                   # BL Headers.
 │       ├── 📁 core/
-│       │   ├──📄 MetricsProcessor.hpp
-│       │   └──📄 WebSocketClientProcessor.hpp
-│       │
 │       ├── 📁 hardware/
-│       │   ├──📄 CPUProcessor.hpp
-│       │   ├──📄 RAMProcessor.hpp
-│       │   ├──📄 GPUProcessor.hpp
-│       │   ├──📄 StorageProcessor.hpp
-│       │   └──📄 BatteryProcessor.hpp
-│       │
-│       └── 📁 network/
-│           └──📄 NetworkProcessor.hpp
+|       └── 📁 network/
 │
-├── 📁 src/                                   # 🎯 All Source Files (.cpp)
+├── 📁 src/                              # 🎯 Implementation Source Files (.cpp)
 │   ├── 📁 config/
-│   │   └──📄 AgentConfig.cpp
 │   │
-│   ├── 📁 logic/                             # Business Logic Implementation (BL)
-│   │   ├── 📁 core/
-│   │   │   ├──📄 MetricsProcessor.cpp
-│   │   │   └──📄 WebSocketClientProcessor.cpp
-│   │   │
-│   │   ├── 📁 hardware/
-│   │   │   ├──📄 CPUProcessor.cpp
-│   │   │   ├──📄 RAMProcessor.cpp
-│   │   │   ├──📄 GPUProcessor.cpp
-│   │   │   ├──📄 StorageProcessor.cpp
-│   │   │   └──📄 BatteryProcessor.cpp
-│   │   │
-│   │   └── 📁 network/
-│   │       └──📄 NetworkProcessor.cpp
+│   ├── 📁 readers/
+│   │   ├── 📁 windows/
+│   │   └── 📁 linux/
 │   │
-│   ├── 📁 data_access/                       # Platform-Specific Data Collection (DAL)
-│   │   ├── 📁 linux/
-│   │   │   ├── 📁 hardware/
-│   │   │   │   ├──📄 CPUReader.cpp
-│   │   │   │   ├──📄 RAMReader.cpp
-│   │   │   │   ├──📄 GPUReader.cpp
-│   │   │   │   ├──📄 StorageReader.cpp
-│   │   │   │   └──📄 BatteryReader.cpp
-│   │   │   │
-│   │   │   └── 📁 network/
-│   │   │       └──📄 NetworkReader.cpp
-│   │   │
-│   │   └── 📁 windows/
-│   │       ├── 📁 hardware/
-│   │       │   ├──📄 CPUReader.cpp
-│   │       │   ├──📄 RAMReader.cpp
-│   │       │   ├──📄 GPUReader.cpp
-│   │       │   ├──📄 StorageReader.cpp
-│   │       │   └──📄 BatteryReader.cpp
-│   │       │
-│   │       └── 📁 network/
-│   │           └──📄 NetworkReader.cpp
-│   │
-│   └── 📄 main.cpp
-│
+│   ├──📁 processors/
+│   |   ├── 📁 core/
+│   |   ├── 📁 hardware/
+|   |   └── 📁 network/
+|   |
+|   └── 📄 main.cpp
+|
 ├── 📁 platforms/                             # OS Background Service Wrappers
 │   ├── 📁 windows/
-│   │   └── 📄 WindowsServiceMain.cpp
 │   └── 📁 linux/
-│       └── 📄 LinuxDaemonMain.cpp
 │
 └── 📁 tests/                                 # Automated Test Target Suites
     ├── 📁 unit/
     └── 📁 integration/
-```
-
-2. NestJS GATEWAY SERVER
-
-```text
-📁 nestjs-gateway-server/
-│
-├── 📁 src/
-│   ├── 📄 app.module.ts              # Root Module: Tying all modules together
-│   ├── 📄 main.ts                    # Entry Point: Starts the NestJS HTTP/WS Server
-│   │
-│   ├── 📁 core/                      # Global common contracts and models
-│   │   └── 📁 interfaces/
-│   │       ├── 📄 device-metrics.interface.ts  # Structure of incoming JSON payload
-│   │       └── 📄 active-device.interface.ts   # Structure of an connected agent session
-│   │
-│   ├── 📁 agent-gateway/             # 🌐 The WebSocket Server Layer
-│   │   ├── 📄 agent.gateway.ts       # Handles WebSocket connections, events & streams
-│   │   ├── 📄 agent.gateway.module.ts# Encapsulates WebSocket logic
-│   │   └── 📄 agent.gateway.service.ts # Manages socket maps (Socket IDs to Device IDs)
-│   │
-│   └── 📁 background-tracker/        # ⚙️ The Server-Side Background Layer
-│       ├── 📄 tracker.module.ts      # Registers cron jobs or interval tasks
-│       └── 📄 tracker.service.ts     # Monitors timeouts (detects if an agent dies)
-```
-
-3. REACT WEB DASHBOARD
-
-```text
-📁 react-monitor-dashboard/
-│
-├── index.html                 # The single HTML page template
-├── 📁 src/
-│   ├── main.tsx               # Application entry point
-│   ├── App.tsx                # Root component (Layout wrapper)
-│   │
-│   ├── 📁 assets/                # Static assets (images, icons, global styles)
-│   │
-│   ├── 📁 core/                  # Shared data definitions and utility functions
-│   │   ├── types/
-│   │   │   └── metrics.types.ts # TypeScript interfaces mirroring NestJS/C++ models
-│   │   └── utils/
-│   │       └── formatters.ts   # Helper functions (e.g., bytes to GB, rounding % values)
-│   │
-│   ├── 📁 hooks/                 # Custom React Hooks (Crucial for state management)
-│   │   └── useAgentWebSocket.ts # Encapulates all WebSocket listening and cleanup logic
-│   │
-│   └── 📁 components/            # UI Display Blocks
-│       ├── 📁 common/
-│       │   └── Button.tsx     # Reusable UI buttons (e.g., for Remote Control triggers)
-│       └── 📁 dashboard/
-│           ├── MetricsGrid.tsx # Container grid for all dynamic metrics cards
-│           ├── MetricCard.tsx  # Individual card tracking a single metric (CPU/RAM)
-│           └── ControlPanel.tsx# Section hosting the Remote Shutdown / Restart buttons
 ```
 
 ## ⚖️ 3. Architecture Decisions (ADRs)
