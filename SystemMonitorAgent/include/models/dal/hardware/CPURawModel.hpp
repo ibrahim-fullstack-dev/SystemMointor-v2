@@ -39,7 +39,7 @@ namespace System {
                     uint32_t totalActiveThreads = 0;
                     uint32_t totalOpenedHandles = 0;
 
-                    stTimestamp snapshotTimestamp;
+                    RawCommon::stTimestamp snapshotTimestamp;
                 };
 
                 // 3. The complete raw snapshot for CPU (serves stCPUDTO)
@@ -59,7 +59,7 @@ namespace System {
                     std::array<uint32_t, Config::Limits::MAX_SUPPORTED_CORES> logicalIds{};
                     std::array<Enums::enCorePerformanceType, Config::Limits::MAX_SUPPORTED_CORES> coreTypes{};
 
-                    stTimestamp snapshotTimestamp;
+                    RawCommon::stTimestamp snapshotTimestamp;
                 };
 
                 // 3. Process raw counters (serves stProcessDTO)
@@ -71,7 +71,7 @@ namespace System {
                     std::array<uint32_t, Config::Limits::MAX_MONITORED_PROCESSES> processIds{};
                     std::array<std::array<char, 32>, Config::Limits::MAX_MONITORED_PROCESSES> processNames{};
 
-                    stTimestamp snapshotTimestamp;
+                    RawCommon::stTimestamp snapshotTimestamp;
                 };
 
                 // 4. Thread raw counters (serves stThreadDTO)
@@ -84,7 +84,7 @@ namespace System {
                     std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadKernelTicks{};
                     std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadUserTicks{};
 
-                    stTimestamp snapshotTimestamp;
+                    RawCommon::stTimestamp snapshotTimestamp;
                 };
 
             }
