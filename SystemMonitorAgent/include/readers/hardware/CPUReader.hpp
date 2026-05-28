@@ -12,30 +12,27 @@ namespace System {
                 
             public:
 
-                 CpuReader();
-                ~CpuReader() = default;
+                bool FetchCPUTicks(Model::Raw::CPU::stCPURawSnapshot& outSnapshot);
 
-                bool FetchCPUTicks(Model::Raw::CPU::& outSnapshot);
+                bool FetchStaticAnalytics(Model::Raw::CPU::stCPURawSnapshot& outSnapshot);
 
-                bool FetchStaticAnalytics(Model::Raw::CPU::& outSnapshot);
+                bool FetchDynamicAnalytics(Model::Raw::CPU::stCPURawSnapshot& outSnapshot);
 
-                bool FetchDynamicAnalytics(Model::Raw::CPU::& outSnapshot);
-
-                bool FetchCPURawSnapshot(Model::Raw::CPU::& outSnapshot);
+                bool FetchCPURawSnapshot(Model::Raw::CPU::stCPURawSnapshot& outSnapshot);
             };
 
-            class CoresReader {
+            //class CoresReader {
 
-                bool FetchCoreSnapshot(Model::Hardware::DAL::CPU::stCoreRawSnapshot& outSnapshot);
-            };
+            //    bool FetchCoreSnapshot(Model::Raw::CPU::stCoreRawSnapshot& outSnapshot);
+            //};
 
-            class ProcessesReader {
-                bool FetchProcessSnapshot(Model::Hardware::DAL::CPU::stProcessRawSnapshot& outSnapshot);
-            };
+            //class ProcessesReader {
+            //    bool FetchProcessSnapshot(Model::Raw::CPU::stProcessRawSnapshot& outSnapshot);
+            //};
 
-            class ThreadsReader {
-                bool FetchThreadSnapshot(Model::Hardware::DAL::CPU::stThreadRawSnapshot& outSnapshot);
-            };
+            //class ThreadsReader {
+            //    bool FetchThreadSnapshot(Model::Raw::CPU::stThreadRawSnapshot& outSnapshot);
+            //};
         }
     }
 }
