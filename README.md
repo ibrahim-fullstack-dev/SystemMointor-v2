@@ -1,56 +1,32 @@
 # 🖥️ System Monitor v2
 
+**System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely, alongside remote reverse control from anywhere in the world.
+
 ## 📋 1. Requirements Analysis
 
 - Understand what the system must do and why:
 
-### 🎯 1.1 (The What)
+**🎯 1.1 (The What)**
 
-**System Monitor v2** is a next-generation infrastructure monitoring platform designed for real-time tracking of remote servers and personal computers. It provides users with a comprehensive, low-latency web dashboard to access, monitor, and audit system vitals securely, alongside remote reverse control from anywhere in the world.
+- It is a production line consisting of three main parts:
 
-#### It is a production line consisting of three main parts:
+1. Agent (written in C++): A lightweight background daemon running on the host machine or server. Its sole function is to directly interact with the OS kernel to fetch data from hardware components.
 
-1. **Agent (written in C++):** A lightweight background daemon running on the host machine or server. Its sole function is to directly interact with the OS kernel to fetch data from hardware components.
+2. Backend (written NestJS): A centralized intermediary server. It receives the live telemetry data from the C++ Agent and broadcasts it to the internet immediately. It also receives remote commands from the dashboard and securely routes them back to the target device.
 
-2. **Backend (written NestJS):** A centralized intermediary server. It receives the live telemetry data from the C++ Agent and broadcasts it to the internet immediately. It also receives remote commands from the dashboard and securely routes them back to the target device.
+3. Frontend (written in React): A responsive web application accessible from any device globally (computer or phone). It visualizes hardware info on live charts and provides a secure command interface containing control buttons (e.g., an emergency shut down button, kill process etc...).
 
-3. **Frontend (written in React):** A responsive web application accessible from any device globally (computer or phone). It visualizes hardware info on live charts and provides a secure command interface containing control buttons (e.g., an emergency shut down button).
+**💡1.2 (The Why)**
 
-#### The system captures, processes, and visualizes the following critical telemetry metrics:
+- ❌ The Problem: While many monitoring tools exist, they often suffer from poor user experience, delayed alerts, and an inability to take action. System Monitor v2 was built to solve these exact user frustrations by focusing on three core motivations:
 
-**⚡ CPU Telemetry & Core Analytics:**
-
-- **Total CPU Utilization**
-- **Dynamic Clock Speed (GHz)**
-- **Per-Core / Process / Thread Granularity.**
-- **Execution Mode Lifecycle Breakdown**
-  - User Mode Cycles
-  - Kernel Mode Contexts
-  - Hardware Interrupt Signalling
-
-* **🧠 RAM:** Live memory allocation, swap space, and cache usage.
-
-  **🎮 GPU:** Graphics processor utilization and video memory (VRAM) consumption.
-
-  **🌐 Network:** Real-time upload/download bandwidth, network latency, and interface status.
-
-  **🔋 Battery:** Charge capacity, degradation/health status, and power consumption rates.
-
-  **⚙️ Processes:** A full inventory of active background processes with sorting options based on resource consumption.
-
-### 💡1.2 (The Why)
-
-**❌ The Problem:**
-
-- While many monitoring tools exist, they often suffer from poor user experience, delayed alerts, and an inability to take action. System Monitor v2 was built to solve these exact user frustrations by focusing on three core motivations:
-
-  **✅ The Solution:**
+- ✅ The Solutions:
 
 1. **Universal Accessibility & Ease of Use:** System administrators shouldn't be tethered to complex VPN setups, local networks, or intimidating terminal screens just to check their hardware. This project democratizes server management by providing a sleek, responsive web dashboard. A user can securely monitor their entire infrastructure from a laptop, tablet, or smartphone anywhere in the world with zero friction.
 
 2. **Active Device Protection (From Passive to Reactive):** Most monitoring platforms are strictly "passive"—they only send an email alert when a server is already overheating or crashing. This system transitions to "active" protection by acting as a two-way control center. If an administrator spots a critical spike on the dashboard, they don't need to waste time logging into the server manually; they can instantly push a reverse command (like an emergency SHUTDOWN) directly from the browser to save the hardware before catastrophic damage occurs.
 
-3. **Peace of Mind Through Instant Visibility:** TTraditional monitoring setups rely on delayed polling (e.g., refreshing data every 1 to 5 minutes), leaving IT teams blind to sudden traffic spikes or memory leaks between those intervals. By streaming true, sub-second live telemetry, this project gives engineers absolute peace of mind. They can trust that they are seeing the exact, live pulse of their machines the very millisecond a change happens.
+3. **Peace of Mind Through Instant Visibility:** Traditional monitoring setups rely on delayed polling (e.g., refreshing data every 1 to 5 minutes), leaving IT teams blind to sudden traffic spikes or memory leaks between those intervals. By streaming true, sub-second live telemetry, this project gives engineers absolute peace of mind. They can trust that they are seeing the exact, live pulse of their machines the very millisecond a change happens.
 
 ## 🏗️ 2. System Design & Data Flow
 
