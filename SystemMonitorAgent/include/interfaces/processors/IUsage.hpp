@@ -6,10 +6,10 @@ namespace System {
 	namespace Interface {
 
 		template <typename TRawModel, typename TProcessedModel>
-		class IGetUsage {
+		class IUsage {
 
 		public:
-			virtual ~IGetUsage() = default;
+			virtual ~IUsage() = default;
 
 			virtual bool GetUsage(const TRawModel& raw, TProcessedModel& out) = 0;
 		};

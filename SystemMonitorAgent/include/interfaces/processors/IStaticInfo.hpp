@@ -6,10 +6,10 @@ namespace System {
 	namespace Interface {
 
 		template <typename TRawModel, typename TProcessedModel>
-		class IGetInfo {
+		class IStaticInfo {
 		public:
 
-			virtual ~IGetInfo() = default;
+			virtual ~IStaticInfo() = default;
 
 			virtual bool GetInfo(const TRawModel& raw, TProcessedModel& out) = 0;
 		};
