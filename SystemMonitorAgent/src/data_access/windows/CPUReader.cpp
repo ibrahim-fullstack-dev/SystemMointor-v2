@@ -1,4 +1,5 @@
 #include "readers/hardware/CPUReader.hpp"
+#include "utils/WinTimeUtils.hpp"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -7,16 +8,13 @@
 #include <Windows.h>
 #include<psapi.h>
 #include <cstring>
+#include <cstdint>
 
 namespace System {
 
     namespace Reader {
 
         namespace CPU {
-
-            inline uint64_t CPUReader::ConvertFileTimeToUInt64(const FILETIME& ft) {
-                return (static_cast<uint64_t>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-            }
 
             bool CPUReader::FetchStaticAnalytics(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
                 // Fetch Cores and Architecture
@@ -60,9 +58,9 @@ namespace System {
                 FILETIME idleTime, kernelTime, userTime;
                 if (!GetSystemTimes(&idleTime, &kernelTime, &userTime)) return false;
 
-                outSnapshot.dynamicAnalytics.rawTicks.rawIdleTicks = ConvertFileTimeToUInt64(idleTime);
-                outSnapshot.dynamicAnalytics.rawTicks.rawKernelTicks = ConvertFileTimeToUInt64(kernelTime);
-                outSnapshot.dynamicAnalytics.rawTicks.rawUserTicks = ConvertFileTimeToUInt64(userTime);
+                outSnapshot.dynamicAnalytics.rawTicks.rawIdleTicks = System::Reader::Util::ConvertFileTimeToUInt64(idleTime);
+                outSnapshot.dynamicAnalytics.rawTicks.rawKernelTicks = System::Reader::Util::ConvertFileTimeToUInt64(kernelTime);
+                outSnapshot.dynamicAnalytics.rawTicks.rawUserTicks = System::Reader::Util::ConvertFileTimeToUInt64(userTime);
 
 
                 return true;
@@ -89,7 +87,7 @@ namespace System {
 
             bool CPUReader::FetchCPURawSnapshot(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
 
-                return (FetchCPUTicks(outSnapshot) && FetchCPUDynamicAnalytics(outSnapshot));
+                return (FetchCPUTicks(outSnapshot) && FetchDynamicAnalytics(outSnapshot));
             }
 
         }
