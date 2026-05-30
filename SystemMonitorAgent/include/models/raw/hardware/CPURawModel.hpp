@@ -13,8 +13,8 @@ namespace System {
 
             namespace CPU {
 
-                // Interface raw counters (serves stInterfaceCounters)
-                struct stCPURawTicks
+                // CPU - Raw counters.
+                struct CPURawTicks
                 {
                     uint64_t rawIdleTicks = 0;
                     uint64_t rawKernelTicks = 0;
@@ -22,8 +22,8 @@ namespace System {
                     uint64_t rawInterruptTicks = 0;
                 };
 
-                // Static info.
-                struct stCPUStaticRawAnalytics
+                // CPU - Raw Static data.
+                struct CPUStaticRawInfo
                 {
                     std::array<wchar_t, 16>  ProcessorArchitecture{};
                     std::array<wchar_t, 128> ProcessorNameString{};
@@ -31,61 +31,66 @@ namespace System {
                     uint32_t currentClockSpeedMhz = 0;
                 };
 
-                // Update inside loop
-                struct stCPUDynamicRawAnalytics
-                {
-                    stCPURawTicks rawTicks;
+                // CPU - Raw Statistics.
+                struct RawStatistics {
                     uint32_t totalActiveProcesses = 0;
                     uint32_t totalActiveThreads = 0;
                     uint32_t totalOpenedHandles = 0;
-
-                    RawCommon::stTimestamp snapshotTimestamp;
                 };
 
-                // 3. The complete raw snapshot for CPU (serves stCPUDTO)
-                struct stCPURawSnapshot
+                // CPU - Dynamic Raw data.
+                struct CPUDynamicRawData
                 {
-                    stCPUStaticRawAnalytics  staticAnalytics;
-                    stCPUDynamicRawAnalytics dynamicAnalytics;
+                    CPURawTicks rawTicks;
+                    RawStatistics statistics;
+
+                    Common::Timestamp timestamp;
                 };
 
-                // 2. Core raw counters (serves stCoreDTO)
-                struct stCoreRawSnapshot
+                // 3. The complete raw snapshot for CPU (serves CPUDTO)
+                struct CPURawSnapshot
                 {
-                    std::array<uint64_t, Config::Limits::MAX_SUPPORTED_CORES> rawCoreIdleTicks{};
-                    std::array<uint64_t, Config::Limits::MAX_SUPPORTED_CORES> rawCoreKernelTicks{};
-                    std::array<uint64_t, Config::Limits::MAX_SUPPORTED_CORES> rawCoreUserTicks{};
-
-                    std::array<uint32_t, Config::Limits::MAX_SUPPORTED_CORES> logicalIds{};
-                    std::array<Enums::enCorePerformanceType, Config::Limits::MAX_SUPPORTED_CORES> coreTypes{};
-
-                    RawCommon::stTimestamp snapshotTimestamp;
+                    CPUDynamicRawData  dynamicData;
+                    CPUStaticRawInfo staticData;
                 };
 
-                // 3. Process raw counters (serves stProcessDTO)
-                struct stProcessRawSnapshot
-                {
-                    std::array<uint64_t, Config::Limits::MAX_MONITORED_PROCESSES> rawProcessKernelTicks{};
-                    std::array<uint64_t, Config::Limits::MAX_MONITORED_PROCESSES> rawProcessUserTicks{};
+                //// 2. Core raw counters (serves stCoreDTO)
+                //struct stCoreRawSnapshot
+                //{
+                //    std::array<uint64_t, Config::Limits::MAX_SUPPORTED_CORES> rawCoreIdleTicks{};
+                //    std::array<uint64_t, Config::Limits::MAX_SUPPORTED_CORES> rawCoreKernelTicks{};
+                //    std::array<uint64_t, Config::Limits::MAX_SUPPORTED_CORES> rawCoreUserTicks{};
 
-                    std::array<uint32_t, Config::Limits::MAX_MONITORED_PROCESSES> processIds{};
-                    std::array<std::array<char, 32>, Config::Limits::MAX_MONITORED_PROCESSES> processNames{};
+                //    std::array<uint32_t, Config::Limits::MAX_SUPPORTED_CORES> logicalIds{};
+                //    std::array<Enums::enCorePerformanceType, Config::Limits::MAX_SUPPORTED_CORES> coreTypes{};
 
-                    RawCommon::stTimestamp snapshotTimestamp;
-                };
+                //    RawCommon::stTimestamp snapshotTimestamp;
+                //};
 
-                // 4. Thread raw counters (serves stThreadDTO)
-                struct stThreadRawSnapshot
-                {
-                    uint32_t parentProcessId = 0;
-                    uint32_t activeThreadsCount = 0;
+                //// 3. Process raw counters (serves stProcessDTO)
+                //struct stProcessRawSnapshot
+                //{
+                //    std::array<uint64_t, Config::Limits::MAX_MONITORED_PROCESSES> rawProcessKernelTicks{};
+                //    std::array<uint64_t, Config::Limits::MAX_MONITORED_PROCESSES> rawProcessUserTicks{};
 
-                    std::array<uint32_t, Config::Limits::MAX_MONITORED_THREADS> threadIds{};
-                    std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadKernelTicks{};
-                    std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadUserTicks{};
+                //    std::array<uint32_t, Config::Limits::MAX_MONITORED_PROCESSES> processIds{};
+                //    std::array<std::array<char, 32>, Config::Limits::MAX_MONITORED_PROCESSES> processNames{};
 
-                    RawCommon::stTimestamp snapshotTimestamp;
-                };
+                //    RawCommon::stTimestamp snapshotTimestamp;
+                //};
+
+                //// 4. Thread raw counters (serves stThreadDTO)
+                //struct stThreadRawSnapshot
+                //{
+                //    uint32_t parentProcessId = 0;
+                //    uint32_t activeThreadsCount = 0;
+
+                //    std::array<uint32_t, Config::Limits::MAX_MONITORED_THREADS> threadIds{};
+                //    std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadKernelTicks{};
+                //    std::array<uint64_t, Config::Limits::MAX_MONITORED_THREADS> rawThreadUserTicks{};
+
+                //    RawCommon::stTimestamp snapshotTimestamp;
+                //};
 
             }
         }
