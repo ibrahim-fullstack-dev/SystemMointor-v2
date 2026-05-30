@@ -11,7 +11,7 @@ namespace System {
 		public:
 			virtual ~IGetUsage() = default;
 
-			virtual bool GetUsage(TRawModel& raw, TProcessedModel& out) = 0;
+			virtual bool GetUsage(const TRawModel& raw, TProcessedModel& out) = 0;
 		};
 	}
 }

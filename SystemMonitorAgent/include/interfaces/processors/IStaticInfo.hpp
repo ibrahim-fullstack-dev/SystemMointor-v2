@@ -11,7 +11,7 @@ namespace System {
 
 			virtual ~IGetInfo() = default;
 
-			virtual bool GetInfo(TRawModel& raw, TProcessedModel& out) = 0;
+			virtual bool GetInfo(const TRawModel& raw, TProcessedModel& out) = 0;
 		};
 	}
 }
