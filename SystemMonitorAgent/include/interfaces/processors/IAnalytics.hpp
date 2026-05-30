@@ -11,7 +11,7 @@ namespace System {
 
 			virtual ~IAnalytics() = default;
 
-			virtual bool GetAnalytics(TRawModel& raw, TProcessedModel& out) = 0;
+			virtual bool GetAnalytics(const TRawModel& raw, TProcessedModel& out) = 0;
 		};
 	}
 }
