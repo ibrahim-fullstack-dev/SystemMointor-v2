@@ -85,11 +85,6 @@ namespace System {
 
             }
 
-            bool CPUReader::FetchCPURawSnapshot(Model::Raw::CPU::stCPURawSnapshot& outSnapshot) {
-
-                return (FetchCPUTicks(outSnapshot) && FetchDynamicAnalytics(outSnapshot));
-            }
-
         }
 
     }

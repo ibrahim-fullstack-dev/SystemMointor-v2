@@ -18,7 +18,6 @@ namespace System {
 
                 bool FetchDynamicAnalytics(Model::Raw::CPU::stCPURawSnapshot& outSnapshot);
 
-                bool FetchCPURawSnapshot(Model::Raw::CPU::stCPURawSnapshot& outSnapshot);
             };
 
             //class CoresReader {
