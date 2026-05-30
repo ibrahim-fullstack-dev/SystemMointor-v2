@@ -23,7 +23,7 @@ namespace System {
                 };
 
                 // CPU - Raw Static data.
-                struct CPUStaticRawInfo
+                struct CPUStaticRawData
                 {
                     std::array<wchar_t, 16>  ProcessorArchitecture{};
                     std::array<wchar_t, 128> ProcessorNameString{};
@@ -51,7 +51,7 @@ namespace System {
                 struct CPURawSnapshot
                 {
                     CPUDynamicRawData  dynamicData;
-                    CPUStaticRawInfo staticData;
+                    CPUStaticRawData staticData;
                 };
 
                 //// 2. Core raw counters (serves stCoreDTO)
