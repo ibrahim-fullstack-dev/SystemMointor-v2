@@ -5,13 +5,16 @@ namespace System {
 
     namespace Model {
 
-        namespace RawCommon {
+        namespace Raw{
 
-            struct stTimestamp
-            {
-                uint64_t rawSystemTimeTimestamp = 0;
-            };
+            namespace Common {
 
+                struct Timestamp
+                {
+                    uint64_t rawTimestamp = 0;
+                };
+
+            }
         }
     }
 }
