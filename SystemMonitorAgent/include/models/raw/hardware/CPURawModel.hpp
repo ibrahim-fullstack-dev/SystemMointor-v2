@@ -2,7 +2,7 @@
 #include <array>
 #include <cstdint>
 #include "config/SystemLimits.hpp"
-#include "models/dal/RawCommon.hpp"
+#include "models/raw/RawCommon.hpp"
 #include "enums/EnumsProvider.hpp"
 
 namespace System {

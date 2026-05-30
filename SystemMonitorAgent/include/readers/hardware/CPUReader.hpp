@@ -1,5 +1,5 @@
 #pragma once
-#include "models/dal/hardware/CPURawModel.hpp"
+#include "models/raw/hardware/CPURawModel.hpp"
 
 namespace System {
 

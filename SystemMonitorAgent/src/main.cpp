@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "models/dal/hardware/CPURawModel.hpp"
+#include "models/raw/hardware/CPURawModel.hpp"
 #include "readers/hardware/CPUReader.hpp"
 
 void PrintSectionHeader(const std::string title) {

@@ -20,7 +20,7 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILDS ON)
 # (e.g., src/logic/hardwares/*.cpp and src/logic/network/*.cpp)
 file(GLOB_RECURSE COMMON_SOURCES
     "src/config/*.cpp"
-    "src/logic/*.cpp"
+    "src/processors/*.cpp"
 )
 
 # Append local development entry point explicitly
@@ -34,7 +34,7 @@ if(WIN32)
     message(STATUS " [OS DETECTED] Configuring target build for Windows OS...")
     
     # Automatically tracks windows/hardwares/ and windows/network/ implementation sets
-    file(GLOB_RECURSE OS_SPECIFIC_SOURCES "src/data_access/windows/*.cpp")
+    file(GLOB_RECURSE OS_SPECIFIC_SOURCES "src/readers/windows/*.cpp")
     
     add_compile_definitions(PLATFORM_WINDOWS)
     
@@ -48,7 +48,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     message(STATUS " [OS DETECTED] Configuring target build for Linux OS...")
     
     # Automatically tracks linux/hardwares/ and linux/network/ implementation sets
-    file(GLOB_RECURSE OS_SPECIFIC_SOURCES "src/data_access/linux/*.cpp")
+    file(GLOB_RECURSE OS_SPECIFIC_SOURCES "src/readers/linux/*.cpp")
     
     add_compile_definitions(PLATFORM_LINUX)
 
